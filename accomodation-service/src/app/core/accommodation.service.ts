@@ -26,10 +26,6 @@ export class AccommodationService {
   }): Array<Accommodation & { temperature: number; precipitation: number }> {
     const data = this.all();
     return data
-      .filter(a =>
-        (params.environment ? a.environment === params.environment : true) &&
-        (params.type ? a.type === params.type : true)
-      )
       .map(a => ({
         ...a,
         temperature: a.avgTempByMonthC[params.month],

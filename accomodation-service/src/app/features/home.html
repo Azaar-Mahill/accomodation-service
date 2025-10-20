@@ -58,21 +58,6 @@
             </mat-select>
           </mat-form-field>
 
-          <mat-form-field appearance="outline">
-            <mat-label>Type of Environment</mat-label>
-            <mat-select formControlName="environment">
-              <mat-option [value]="null">Any</mat-option>
-              <mat-option *ngFor="let e of environments" [value]="e">{{ e }}</mat-option>
-            </mat-select>
-          </mat-form-field>
-
-          <mat-form-field appearance="outline">
-            <mat-label>Type of Accommodation</mat-label>
-            <mat-select formControlName="type">
-              <mat-option [value]="null">Any</mat-option>
-              <mat-option *ngFor="let t of types" [value]="t">{{ t }}</mat-option>
-            </mat-select>
-          </mat-form-field>
 
           <button mat-raised-button color="primary" type="button" (click)="searchTab2()">Search</button>
         </div>
