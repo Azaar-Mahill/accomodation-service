@@ -1,0 +1,92 @@
+<mat-tab-group>
+  <!-- TAB1 -->
+  <mat-tab label="TAB1">
+    <form class="panel" [formGroup]="tab1Form">
+      <div class="filters">
+        <mat-form-field appearance="outline">
+          <mat-label>Month hope to visit</mat-label>
+          <mat-select formControlName="month">
+            <mat-option [value]="null">Any</mat-option>
+            <mat-option *ngFor="let m of months" [value]="m.value">{{ m.label }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Type of Environment</mat-label>
+          <mat-select formControlName="environment">
+            <mat-option [value]="null">Any</mat-option>
+            <mat-option *ngFor="let e of environments" [value]="e">{{ e }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Type of Accommodation</mat-label>
+          <mat-select formControlName="type">
+            <mat-option [value]="null">Any</mat-option>
+            <mat-option *ngFor="let t of types" [value]="t">{{ t }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <button mat-raised-button color="primary" type="button" (click)="searchTab1()">Search</button>
+      </div>
+
+      <div class="results">
+        <mat-card *ngFor="let a of tab1Results()">
+          <mat-card-title>Name of Accommodation: {{ a.name }}</mat-card-title>
+          <mat-card-content>
+            <p><strong>Address:</strong> {{ a.address }}</p>
+          </mat-card-content>
+          <mat-card-actions>
+            <a mat-button color="accent" [routerLink]="['/book', a.id]">Click to book</a>
+          </mat-card-actions>
+        </mat-card>
+      </div>
+    </form>
+  </mat-tab>
+
+  <!-- TAB2 -->
+  <mat-tab label="TAB2">
+    <form class="panel" [formGroup]="tab2Form">
+      <div class="filters">
+        <mat-form-field appearance="outline">
+          <mat-label>Month hope to visit</mat-label>
+          <mat-select formControlName="month" required>
+            <mat-option *ngFor="let m of months" [value]="m.value">{{ m.label }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Type of Environment</mat-label>
+          <mat-select formControlName="environment">
+            <mat-option [value]="null">Any</mat-option>
+            <mat-option *ngFor="let e of environments" [value]="e">{{ e }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Type of Accommodation</mat-label>
+          <mat-select formControlName="type">
+            <mat-option [value]="null">Any</mat-option>
+            <mat-option *ngFor="let t of types" [value]="t">{{ t }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <button mat-raised-button color="primary" type="button" (click)="searchTab2()">Search</button>
+      </div>
+
+      <div class="results">
+        <mat-card *ngFor="let a of tab2Results()">
+          <mat-card-title>Name of Accommodation: {{ a.name }}</mat-card-title>
+          <mat-card-content>
+            <p><strong>Address:</strong> {{ a.address }}</p>
+            <p><strong>Average temperature:</strong> {{ a.temperature }} °C</p>
+            <p><strong>Average precipitation:</strong> {{ a.precipitation }} mm</p>
+          </mat-card-content>
+          <mat-card-actions>
+            <a mat-button color="accent" [routerLink]="['/book', a.id]">Click to book</a>
+          </mat-card-actions>
+        </mat-card>
+      </div>
+    </form>
+  </mat-tab>
+</mat-tab-group>
