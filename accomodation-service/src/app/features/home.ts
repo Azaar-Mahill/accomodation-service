@@ -50,13 +50,21 @@ export class HomeComponent {
   }
 
   searchTab1() {
-    const { month, environment, type } = this.tab1Form.value;
-    this.tab1Results.set(this.svc.searchBasic({
-      month: month ?? undefined,
-      environment: environment ?? undefined,
-      type: type ?? undefined,
-    }));
-  }
+  const { month, environment, type } = this.tab1Form.value;
+
+  this.svc.searchBasicHttp({
+    month: month ?? null,
+    environment: environment ?? null,
+    type: type ?? null,
+  }).subscribe({
+    next: (list) => this.tab1Results.set(list),
+    error: (err) => {
+      console.error('Accommodation Seletion search failed', err);
+      this.tab1Results.set([]); // fallback to empty if error
+    }
+  });
+}
+
 
   searchTab2() {
     const { month, environment, type } = this.tab2Form.value;
