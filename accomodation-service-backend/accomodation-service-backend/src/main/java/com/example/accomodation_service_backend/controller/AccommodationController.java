@@ -21,9 +21,9 @@ public class AccommodationController {
     public void search(
             @RequestParam(required = false) Integer month,
             @RequestParam(required = false) String environment,
-            @RequestParam(required = false) String type
+            @RequestParam(required = false) String environmentType
     ) {
-        svc.search(month, environment, type);
+        svc.search(month, environment, environmentType);
     }
 
     // Optional: fetch all

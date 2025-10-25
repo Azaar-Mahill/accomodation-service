@@ -34,7 +34,7 @@ export class AccommodationService {
     let httpParams = new HttpParams();
     if (params.month != null) httpParams = httpParams.set('month', String(params.month));
     if (params.environment) httpParams = httpParams.set('environment', params.environment);
-    if (params.type) httpParams = httpParams.set('type', params.type);
+    if (params.type) httpParams = httpParams.set('environmentType', params.type);
 
     return this.http.get<Accommodation[]>(
       `${this.baseUrl}/api/accommodations/search`,

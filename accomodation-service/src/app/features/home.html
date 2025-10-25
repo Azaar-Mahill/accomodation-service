@@ -1,13 +1,12 @@
 <mat-tab-group>
   <!-- TAB1 -->
-  <mat-tab label="Accommodation Seletion">
+  <mat-tab label="Accommodation Selection">
     <form class="panel" [formGroup]="tab1Form">
       <div class="content-layout">
         <div class="filters">
           <mat-form-field appearance="outline">
             <mat-label>Month hope to visit</mat-label>
             <mat-select formControlName="month">
-              <mat-option [value]="null">Any</mat-option>
               <mat-option *ngFor="let m of months" [value]="m.value">{{ m.label }}</mat-option>
             </mat-select>
           </mat-form-field>
@@ -15,7 +14,6 @@
           <mat-form-field appearance="outline">
             <mat-label>Type of Environment</mat-label>
             <mat-select formControlName="environment">
-              <mat-option [value]="null">Any</mat-option>
               <mat-option *ngFor="let e of environments" [value]="e">{{ e }}</mat-option>
             </mat-select>
           </mat-form-field>
@@ -23,7 +21,6 @@
           <mat-form-field appearance="outline">
             <mat-label>Type of Accommodation</mat-label>
             <mat-select formControlName="type">
-              <mat-option [value]="null">Any</mat-option>
               <mat-option *ngFor="let t of types" [value]="t">{{ t }}</mat-option>
             </mat-select>
           </mat-form-field>

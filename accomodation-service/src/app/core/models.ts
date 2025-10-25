@@ -1,5 +1,5 @@
-export type EnvironmentType = 'Beach' | 'Hill Country' | 'City' | 'Wildlife' | 'Cultural';
-export type AccommodationType = 'Hotel' | 'Resort' | 'Villa' | 'Guest House' | 'Hostel';
+export type EnvironmentType = 'Any' | 'Beach' | 'Hill Country' | 'City' | 'Wildlife' | 'Cultural';
+export type AccommodationType = 'Any' |'Hotel' | 'Resort' | 'Villa' | 'Guest House' | 'Hostel';
 
 export interface Accommodation {
   id: string;

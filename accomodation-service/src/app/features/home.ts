@@ -25,8 +25,8 @@ export class HomeComponent {
     value: i + 1,
     label: new Date(2000, i, 1).toLocaleString('en', { month: 'long' })
   }));
-  environments: EnvironmentType[] = ['Beach','Hill Country','City','Wildlife','Cultural'];
-  types: AccommodationType[] = ['Hotel','Resort','Villa','Guest House','Hostel'];
+  environments: EnvironmentType[] = ['Any','Beach','Hill Country','City','Wildlife','Cultural'];
+  types: AccommodationType[] = ['Any','Hotel','Resort','Villa','Guest House','Hostel'];
 
   // declare with definite assignment; initialize in constructor
   tab1Form!: FormGroup;
