@@ -1,5 +1,6 @@
 package com.example.accomodation_service_backend.controller;
 
+import com.example.accomodation_service_backend.dto.AccomodationDTO;
 import com.example.accomodation_service_backend.model.Accommodation;
 import com.example.accomodation_service_backend.service.AccommodationService;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +20,7 @@ public class AccommodationController {
 
     // GET /api/accommodations/search?month=&environment=&type=
     @GetMapping("/search")
-    public List<Accommodation> search(
+    public List<AccomodationDTO> search(
             @RequestParam(required = false) Integer month,
             @RequestParam(required = false) String environmentType,
             @RequestParam(required = false) String accomodationType

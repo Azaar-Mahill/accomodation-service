@@ -30,9 +30,9 @@
 
         <div class="results">
           <mat-card *ngFor="let a of tab1Results()">
-            <mat-card-title>Name of Accommodation: {{ a.name }}</mat-card-title>
+            <mat-card-title>Name of Accommodation: {{ a.accommodationName }}</mat-card-title>
             <mat-card-content>
-              <p><strong>Address:</strong> {{ a.address }}</p>
+              <p><strong>Address:</strong> {{ a.accommodationAddress }}</p>
             </mat-card-content>
             <mat-card-actions>
               <a mat-button color="accent" [routerLink]="['/book', a.id]">Click to book</a>

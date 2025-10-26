@@ -1,5 +1,6 @@
 package com.example.accomodation_service_backend.service;
 
+import com.example.accomodation_service_backend.dto.AccomodationDTO;
 import com.example.accomodation_service_backend.model.Accommodation;
 import com.example.accomodation_service_backend.model.SafetyOfAreaOfAccommodation;
 import com.example.accomodation_service_backend.model.WeatherOfAreaOfAccommodation;
@@ -40,7 +41,7 @@ public class AccommodationService {
         this.weatherOfAreaOfAccommodationRepository = weatherOfAreaOfAccommodationRepository;
     }
 
-    public List<Accommodation> search(Integer month, String environmentType, String accomodationType) {
+    public List<AccomodationDTO> search(Integer month, String environmentType, String accomodationType) {
 
         List<String> listOfAccommodationTypeSks = new ArrayList<>();
         if ("Any".equalsIgnoreCase(accomodationType)) {
@@ -176,9 +177,20 @@ public class AccommodationService {
 
         }
 
+        List<AccomodationDTO> listOfFilteredAccommodations = new ArrayList<>();
+
+        for(Accommodation accommodationsFoundFromFilteringWeather:listOfAccommodationsFoundFromFilteringWeather){
+
+            String province = accommodationLocationRepository.getProvince(accommodationsFoundFromFilteringWeather.getAccommodationLocationSk());
+            String district = accommodationLocationRepository.getDistrict(accommodationsFoundFromFilteringWeather.getAccommodationLocationSk());
+            String city = accommodationLocationRepository.getCity(accommodationsFoundFromFilteringWeather.getAccommodationLocationSk());
+            String address = String.format("%s, %s, %s province", city, district, province);
 
 
-        return listOfAccommodationsFoundFromFilteringWeather;
+            listOfFilteredAccommodations.add(new AccomodationDTO(accommodationsFoundFromFilteringWeather.getAccommodationName(),address));
+        }
+
+        return listOfFilteredAccommodations;
 
     }
 
