@@ -1,11 +1,14 @@
 package com.example.accomodation_service_backend.service;
 
 import com.example.accomodation_service_backend.model.Accommodation;
+import com.example.accomodation_service_backend.model.SafetyOfAreaOfAccommodation;
 import com.example.accomodation_service_backend.repo.AccommodationLocationRepository;
 import com.example.accomodation_service_backend.repo.AccommodationRepository;
 import com.example.accomodation_service_backend.repo.AccommodationTypeRepository;
+import com.example.accomodation_service_backend.repo.SafetyOfAreaOfAccommodationRepository;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,15 +18,24 @@ public class AccommodationService {
     private final AccommodationTypeRepository accommodationTypeRepository;
     private final AccommodationLocationRepository accommodationLocationRepository;
     private final AccommodationRepository accommodationRepository;
+    private final SafetyOfAreaOfAccommodationRepository safetyOfAreaOfAccommodationRepository;
+
+    private final BigDecimal weightOfAccidents = BigDecimal.valueOf(2);
+
+    private final BigDecimal weightOfCrimes = BigDecimal.valueOf(1);
+
+    private final BigDecimal safetyThreshold = BigDecimal.valueOf(2);
 
     public AccommodationService(
             AccommodationTypeRepository accommodationTypeRepository,
             AccommodationLocationRepository accommodationLocationRepository,
-            AccommodationRepository accommodationRepository
+            AccommodationRepository accommodationRepository,
+            SafetyOfAreaOfAccommodationRepository safetyOfAreaOfAccommodationRepository
     ) {
         this.accommodationTypeRepository = accommodationTypeRepository;
         this.accommodationLocationRepository = accommodationLocationRepository;
         this.accommodationRepository = accommodationRepository;
+        this.safetyOfAreaOfAccommodationRepository = safetyOfAreaOfAccommodationRepository;
     }
 
     public List<Accommodation> search(Integer month, String environmentType, String accomodationType) {
@@ -56,6 +68,26 @@ public class AccommodationService {
             }
 
             List<Accommodation> listOfAccommodationsFoundFromFilteringSafety = new ArrayList<>();
+
+            for (Accommodation accommodationFoundFromEnvironmentTypeSks: listOfAccommodationsFoundFromEnvironmentTypeSks){
+                String locationSKOfAccomodation = accommodationFoundFromEnvironmentTypeSks.getAccommodationLocationSk();
+                String convertedMonthSK = convertToMonthSK(month);
+
+                SafetyOfAreaOfAccommodation safetyOfAreaOfAccommodation = safetyOfAreaOfAccommodationRepository.getSafetyDetailsOfLocation(locationSKOfAccomodation, convertedMonthSK);
+
+                BigDecimal accident = (safetyOfAreaOfAccommodation != null && safetyOfAreaOfAccommodation.getAccidentRate() != null)
+                        ? safetyOfAreaOfAccommodation.getAccidentRate()
+                        : BigDecimal.ZERO;
+
+                BigDecimal crime = (safetyOfAreaOfAccommodation != null && safetyOfAreaOfAccommodation.getCrimeRate() != null)
+                        ? safetyOfAreaOfAccommodation.getCrimeRate()
+                        : BigDecimal.ZERO;
+
+                BigDecimal safetyRateOfAccommodation = (weightOfAccidents.multiply(accident)).add(weightOfCrimes.multiply(crime));
+                if (safetyRateOfAccommodation.compareTo(safetyThreshold) < 0) {
+                    listOfAccommodationsFoundFromFilteringSafety.add(accommodationFoundFromEnvironmentTypeSks);
+                }
+            }
         }
 
 
@@ -77,6 +109,15 @@ public class AccommodationService {
        */
 
         return new ArrayList<>();
+
+    }
+
+    public String convertToMonthSK(Integer month) {
+        if(month>9){
+            return "2025-"+month;
+        }else{
+            return "2025-0"+month;
+        }
 
     }
 
