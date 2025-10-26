@@ -19,6 +19,13 @@ public interface AccommodationLocationRepository extends JpaRepository<Accommoda
            WHERE LOWER(a.environment) = LOWER(:environment)
            """)
     List<String> findAccommodationLocationSksByEnvironment(@Param("environment") String environment);
+
+    @Query("""
+           SELECT a.environment
+           FROM AccommodationLocation a
+           WHERE LOWER(a.accommodationLocationSk) = LOWER(:accommodationLocationSk)
+           """)
+    String getEnvironment(@Param("accommodationLocationSk") String accommodationLocationSk);
 }
 
 

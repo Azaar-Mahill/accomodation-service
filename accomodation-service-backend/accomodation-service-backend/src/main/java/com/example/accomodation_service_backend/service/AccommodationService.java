@@ -35,12 +35,27 @@ public class AccommodationService {
             listOfAccommodationTypeSks = accommodationTypeRepository.findAccommodationTypeSksByTypeName(accomodationType);
         }
         if(listOfAccommodationTypeSks.size() != 0){
-            List<Accommodation> listOfAccommodationsFoundFromTypeSks = new ArrayList<>();
+            List<Accommodation> listOfAccommodationsFoundFromAccommodationTypeSks = new ArrayList<>();
 
             for (String accommodationTypeSk : listOfAccommodationTypeSks){
-                listOfAccommodationsFoundFromTypeSks.addAll(accommodationRepository.getAccomodationsFromTypeSK(accommodationTypeSk));
+                listOfAccommodationsFoundFromAccommodationTypeSks.addAll(accommodationRepository.getAccomodationsFromTypeSK(accommodationTypeSk));
 
             }
+
+            List<Accommodation> listOfAccommodationsFoundFromEnvironmentTypeSks = new ArrayList<>();
+
+            if ("Any".equalsIgnoreCase(environmentType)) {
+                listOfAccommodationsFoundFromEnvironmentTypeSks.addAll(listOfAccommodationsFoundFromAccommodationTypeSks);
+            } else {
+                for (Accommodation accommodationsFoundFromAccommodationTypeSks : listOfAccommodationsFoundFromAccommodationTypeSks){
+                    String environmentOfTheLocation = accommodationLocationRepository.getEnvironment(accommodationsFoundFromAccommodationTypeSks.getAccommodationLocationSk());
+                    if(environmentOfTheLocation.equals(environmentType)){
+                        listOfAccommodationsFoundFromEnvironmentTypeSks.add(accommodationsFoundFromAccommodationTypeSks);
+                    }
+                }
+            }
+
+            List<Accommodation> listOfAccommodationsFoundFromFilteringSafety = new ArrayList<>();
         }
 
 
