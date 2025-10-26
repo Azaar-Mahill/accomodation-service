@@ -25,8 +25,8 @@ export class HomeComponent {
     value: i + 1,
     label: new Date(2000, i, 1).toLocaleString('en', { month: 'long' })
   }));
-  environments: EnvironmentType[] = ['Any','Beach','Hill Country','City','Wildlife','Cultural'];
-  types: AccommodationType[] = ['Any','Hotel','Resort','Villa','Guest House','Hostel'];
+  environmentTypes: EnvironmentType[] = ['Any','Beach','Hill Country','City','Wildlife','Cultural'];
+  accomodationTypes: AccommodationType[] = ['Any','Hotel','Resort','Villa','Guest House','Hostel'];
 
   // declare with definite assignment; initialize in constructor
   tab1Form!: FormGroup;
@@ -38,41 +38,48 @@ export class HomeComponent {
   constructor(private fb: FormBuilder, private svc: AccommodationService) {
     this.tab1Form = this.fb.group({
       month: [null as number | null],
-      environment: [null as EnvironmentType | null],
-      type: [null as AccommodationType | null],
+      environmentType: [null as EnvironmentType | null],
+      accomodationType: [null as AccommodationType | null],
     });
 
     this.tab2Form = this.fb.group({
       month: [null as number | null],
-      environment: [null as EnvironmentType | null],
-      type: [null as AccommodationType | null],
+      environmentType: [null as EnvironmentType | null],
+      accomodationType: [null as AccommodationType | null],
     });
   }
 
   searchTab1() {
-  const { month, environment, type } = this.tab1Form.value;
+    const { month, environmentType, accomodationType } = this.tab1Form.value;
 
-  this.svc.searchBasicHttp({
-    month: month ?? null,
-    environment: environment ?? null,
-    type: type ?? null,
-  }).subscribe({
-    next: (list) => this.tab1Results.set(list),
-    error: (err) => {
-      console.error('Accommodation Seletion search failed', err);
-      this.tab1Results.set([]); // fallback to empty if error
-    }
-  });
-}
-
+    this.svc.searchBasicHttp({
+      month: month ?? null,
+      environmentType: environmentType ?? null,      // map -> environment
+      accomodationType: accomodationType ?? null,            // map -> type
+    }).subscribe({
+      next: (list) => this.tab1Results.set(list),
+      error: (err) => {
+        console.error('Accommodation selection search failed', err);
+        this.tab1Results.set([]);
+      }
+    });
+  }
 
   searchTab2() {
-    const { month, environment, type } = this.tab2Form.value;
+    /*const { month, environmentType, accomodationType } = this.tab2Form.value;
     if (!month) { this.tab2Results.set([]); return; }
-    this.tab2Results.set(this.svc.searchWithMeasures({
+
+    this.svc.searchWithMeasures({
       month,
-      environment: environment ?? undefined,
-      type: type ?? undefined,
-    }));
+      environment: environmentType ?? null,      // map -> environment
+      type: accomodationType ?? null,            // map -> type
+    }).subscribe({
+      next: (list) => this.tab2Results.set(list),
+      error: (err) => {
+        console.error('Accommodation measures search failed', err);
+        this.tab2Results.set([]);
+      }
+    });*/
   }
+
 }

@@ -6,8 +6,8 @@ export interface Accommodation {
   name: string;
   address: string;
   district: string;
-  environment: EnvironmentType;
-  type: AccommodationType;
+  environmentType: EnvironmentType;
+  accomodationType: AccommodationType;
   avgTempByMonthC: Record<number, number>;       // 1..12
   avgPrecipByMonthMm: Record<number, number>;    // 1..12
   bookingUrl?: string;

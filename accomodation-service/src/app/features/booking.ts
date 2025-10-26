@@ -16,7 +16,7 @@ import { AccommodationService } from '../core/accommodation.service';
         <mat-card-content>
           <p><strong>Address:</strong> {{ acc.address }}</p>
           <p><strong>District:</strong> {{ acc.district }}</p>
-          <p><strong>Type:</strong> {{ acc.type }} | <strong>Environment:</strong> {{ acc.environment }}</p>
+          <p><strong>Type:</strong> {{ acc.accomodationType }} | <strong>Environment:</strong> {{ acc.environmentType }}</p>
         </mat-card-content>
         <mat-card-actions>
           <a *ngIf="acc.bookingUrl" mat-raised-button color="primary" [href]="acc.bookingUrl" target="_blank" rel="noopener">

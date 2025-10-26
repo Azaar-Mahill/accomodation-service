@@ -13,15 +13,15 @@
 
           <mat-form-field appearance="outline">
             <mat-label>Type of Environment</mat-label>
-            <mat-select formControlName="environment">
-              <mat-option *ngFor="let e of environments" [value]="e">{{ e }}</mat-option>
+            <mat-select formControlName="environmentType">
+              <mat-option *ngFor="let e of environmentTypes" [value]="e">{{ e }}</mat-option>
             </mat-select>
           </mat-form-field>
 
           <mat-form-field appearance="outline">
             <mat-label>Type of Accommodation</mat-label>
-            <mat-select formControlName="type">
-              <mat-option *ngFor="let t of types" [value]="t">{{ t }}</mat-option>
+            <mat-select formControlName="accomodationType">
+              <mat-option *ngFor="let t of accomodationTypes" [value]="t">{{ t }}</mat-option>
             </mat-select>
           </mat-form-field>
 

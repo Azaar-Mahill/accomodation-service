@@ -20,21 +20,21 @@ export class AccommodationService {
   }): Accommodation[] {
     const data = this.all();
     return data.filter(a =>
-      (params.environment ? a.environment === params.environment : true) &&
-      (params.type ? a.type === params.type : true)
+      (params.environment ? a.environmentType === params.environment : true) &&
+      (params.type ? a.accomodationType === params.type : true)
     );
   }
 
   // --- NEW: HTTP search for TAB1 ---
   searchBasicHttp(params: {
     month?: number | null;
-    environment?: EnvironmentType | null;
-    type?: AccommodationType | null;
+    environmentType?: EnvironmentType | null;
+    accomodationType?: AccommodationType | null;
   }): Observable<Accommodation[]> {
     let httpParams = new HttpParams();
     if (params.month != null) httpParams = httpParams.set('month', String(params.month));
-    if (params.environment) httpParams = httpParams.set('environment', params.environment);
-    if (params.type) httpParams = httpParams.set('environmentType', params.type);
+    if (params.environmentType) httpParams = httpParams.set('environmentType', params.environmentType);
+    if (params.accomodationType) httpParams = httpParams.set('accomodationType', params.accomodationType);
 
     return this.http.get<Accommodation[]>(
       `${this.baseUrl}/api/accommodations/search`,
@@ -51,8 +51,8 @@ export class AccommodationService {
     const data = this.all();
     return data
       .filter(a =>
-        (params.environment ? a.environment === params.environment : true) &&
-        (params.type ? a.type === params.type : true)
+        (params.environment ? a.environmentType === params.environment : true) &&
+        (params.type ? a.accomodationType === params.type : true)
       )
       .map(a => ({
         ...a,
