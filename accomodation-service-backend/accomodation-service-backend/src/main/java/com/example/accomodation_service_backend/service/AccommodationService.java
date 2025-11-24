@@ -5,6 +5,7 @@ import com.example.accomodation_service_backend.dto.AccomodationWeatherDTO;
 import com.example.accomodation_service_backend.model.Accommodation;
 import com.example.accomodation_service_backend.model.SafetyOfAreaOfAccommodation;
 import com.example.accomodation_service_backend.model.WeatherOfAreaOfAccommodation;
+import com.example.accomodation_service_backend.model.WeatherOfAreaOfAccommodation2;
 import com.example.accomodation_service_backend.repo.*;
 import org.springframework.stereotype.Service;
 
@@ -202,7 +203,7 @@ public class AccommodationService {
 
         List<WeatherOfAreaOfAccommodation> listOfFilteredWeatherDetailsBasedOnMonth = weatherOfAreaOfAccommodationRepository.getWeatherDetailsOfLocationBasedOnMonth(convertedMonthSK);
 
-        List<WeatherOfAreaOfAccommodation> listOfFilteredWeatherDetailsBasedOnWeather = new ArrayList<>();
+        List<WeatherOfAreaOfAccommodation2> listOfFilteredWeatherDetailsBasedOnWeather = new ArrayList<>();
 
         for(WeatherOfAreaOfAccommodation weatherDetailsBasedOnMonth:listOfFilteredWeatherDetailsBasedOnMonth){
 
@@ -264,15 +265,33 @@ public class AccommodationService {
                 weatherPoints -= 10;
             }
 
-            if(weatherPoints>5){
-                listOfFilteredWeatherDetailsBasedOnWeather.add(weatherDetailsBasedOnMonth);
+            String weatherStatus;
+
+            if(weatherPoints>15){
+                weatherStatus = "Super";
+            } else if (weatherPoints<5) {
+                weatherStatus = "Bad";
+            }else {
+                weatherStatus = "Normal";
             }
+
+            WeatherOfAreaOfAccommodation2 weatherOfAreaOfAccommodation2 = new WeatherOfAreaOfAccommodation2();
+
+            weatherOfAreaOfAccommodation2.setWeatherOfAreaOfAccommodationSk(weatherDetailsBasedOnMonth.getWeatherOfAreaOfAccommodationSk());
+            weatherOfAreaOfAccommodation2.setWeatherOfAreaOfAccommodationCode(weatherDetailsBasedOnMonth.getWeatherOfAreaOfAccommodationCode());
+            weatherOfAreaOfAccommodation2.setMonthSk(weatherDetailsBasedOnMonth.getMonthSk());
+            weatherOfAreaOfAccommodation2.setAverageTemperature(weatherDetailsBasedOnMonth.getAverageTemperature());
+            weatherOfAreaOfAccommodation2.setAveragePrecipitation(weatherDetailsBasedOnMonth.getAveragePrecipitation());
+            weatherOfAreaOfAccommodation2.setAccommodationLocationSk((weatherDetailsBasedOnMonth.getAccommodationLocationSk()));
+            weatherOfAreaOfAccommodation2.setWeatherStatus(weatherStatus);
+
+            listOfFilteredWeatherDetailsBasedOnWeather.add(weatherOfAreaOfAccommodation2);
 
         }
 
         List<AccomodationWeatherDTO> listOfFilteredAccommodations = new ArrayList<>();
 
-        for(WeatherOfAreaOfAccommodation filteredWeatherDetailsBasedOnWeather:listOfFilteredWeatherDetailsBasedOnWeather){
+        for(WeatherOfAreaOfAccommodation2 filteredWeatherDetailsBasedOnWeather:listOfFilteredWeatherDetailsBasedOnWeather){
 
             AccomodationWeatherDTO accomodationWeatherDTO = new AccomodationWeatherDTO();
             accomodationWeatherDTO.setTemperature(String.valueOf(filteredWeatherDetailsBasedOnWeather.getAverageTemperature()));
@@ -288,6 +307,8 @@ public class AccommodationService {
             String city = accommodationLocationRepository.getCity(accommodationLocationSk);
             String address = String.format("%s, %s, %s province", city, district, province);
             accomodationWeatherDTO.setAccommodationAddress(address);
+
+            accomodationWeatherDTO.setWeatherStatus(filteredWeatherDetailsBasedOnWeather.getWeatherStatus());
 
             listOfFilteredAccommodations.add(accomodationWeatherDTO);
 

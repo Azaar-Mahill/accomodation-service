@@ -66,6 +66,7 @@
               <p><strong>Address:</strong> {{ a.accommodationAddress }}</p>
               <p><strong>Average temperature:</strong> {{ a.temperature }} °C</p>
               <p><strong>Average precipitation:</strong> {{ a.precipitation }} mm</p>
+              <p><strong>Weather Status</strong> {{ a.weatherStatus }} </p>
             </mat-card-content>
             <mat-card-actions>
               <a mat-button color="accent" [routerLink]="['/book', a.id]">Click to book</a>
