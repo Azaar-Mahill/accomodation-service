@@ -63,6 +63,9 @@
           <mat-card *ngFor="let a of tab2Results()">
             <mat-card-title>Name of Accommodation: {{ a.accommodationName }}</mat-card-title>
             <mat-card-content>
+              <p><strong>Environment:</strong> {{ a.environment}}</p>
+            </mat-card-content>
+            <mat-card-content>
               <p><strong>Address:</strong> {{ a.accommodationAddress }}</p>
               <p><strong>Average temperature:</strong> {{ a.temperature }} °C</p>
               <p><strong>Average precipitation:</strong> {{ a.precipitation }} mm</p>

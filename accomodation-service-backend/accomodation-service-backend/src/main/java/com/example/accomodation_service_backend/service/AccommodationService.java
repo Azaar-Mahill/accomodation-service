@@ -328,6 +328,7 @@ public class AccommodationService {
             accomodationWeatherDTO.setAccommodationAddress(address);
 
             accomodationWeatherDTO.setWeatherStatus(filteredWeatherDetailsBasedOnWeather.getWeatherStatus());
+            accomodationWeatherDTO.setEnvironment(accommodationLocationRepository.getEnvironment(accommodationLocationSk));
 
             listOfFilteredAccommodations.add(accomodationWeatherDTO);
 

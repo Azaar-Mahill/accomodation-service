@@ -25,4 +25,7 @@ public class AccomodationWeatherDTO {
 
     @Column(name = "weatherStatus")
     private String weatherStatus;
+
+    @Column(name = "Environment")
+    private String environment;
 }
