@@ -1,6 +1,7 @@
 package com.example.accomodation_service_backend.service;
 
 import com.example.accomodation_service_backend.dto.AccomodationDTO;
+import com.example.accomodation_service_backend.dto.AccomodationWeatherDTO;
 import com.example.accomodation_service_backend.model.Accommodation;
 import com.example.accomodation_service_backend.model.SafetyOfAreaOfAccommodation;
 import com.example.accomodation_service_backend.model.WeatherOfAreaOfAccommodation;
@@ -195,7 +196,7 @@ public class AccommodationService {
     }
 
 
-    public void search2(Integer month) {
+    public List<AccomodationWeatherDTO> search2(Integer month) {
 
         String convertedMonthSK = convertToMonthSK(month);
 
@@ -269,7 +270,30 @@ public class AccommodationService {
 
         }
 
-        String convertedMonthSK2 = convertToMonthSK(month);
+        List<AccomodationWeatherDTO> listOfFilteredAccommodations = new ArrayList<>();
+
+        for(WeatherOfAreaOfAccommodation filteredWeatherDetailsBasedOnWeather:listOfFilteredWeatherDetailsBasedOnWeather){
+
+            AccomodationWeatherDTO accomodationWeatherDTO = new AccomodationWeatherDTO();
+            accomodationWeatherDTO.setTemperature(String.valueOf(filteredWeatherDetailsBasedOnWeather.getAverageTemperature()));
+            accomodationWeatherDTO.setPrecipitation(String.valueOf(filteredWeatherDetailsBasedOnWeather.getAveragePrecipitation()));
+
+            String accommodationLocationSk = filteredWeatherDetailsBasedOnWeather.getAccommodationLocationSk();
+            List<Accommodation> filteredAccommodationsUsingLocationSk = accommodationRepository.getAccomodationsFromAccommodationLocationSk(accommodationLocationSk);
+            accomodationWeatherDTO.setAccommodationName(filteredAccommodationsUsingLocationSk.get(0).getAccommodationName());
+            String convertedMonthSK2 = convertToMonthSK(month);
+
+            String province = accommodationLocationRepository.getProvince(accommodationLocationSk);
+            String district = accommodationLocationRepository.getDistrict(accommodationLocationSk);
+            String city = accommodationLocationRepository.getCity(accommodationLocationSk);
+            String address = String.format("%s, %s, %s province", city, district, province);
+            accomodationWeatherDTO.setAccommodationAddress(address);
+
+            listOfFilteredAccommodations.add(accomodationWeatherDTO);
+
+        }
+
+        return listOfFilteredAccommodations;
 
     }
     public String convertToMonthSK(Integer month) {

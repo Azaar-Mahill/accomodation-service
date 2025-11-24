@@ -93,7 +93,7 @@ export class HomeComponent {
         next: (list) => this.tab2Results.set(list),
         error: (err) => {
           console.error('Accommodation selection search failed', err);
-          this.tab1Results.set([]);
+          this.tab2Results.set([]);
         }
       });
     }else{

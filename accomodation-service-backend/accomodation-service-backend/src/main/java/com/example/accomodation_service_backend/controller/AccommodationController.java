@@ -1,6 +1,7 @@
 package com.example.accomodation_service_backend.controller;
 
 import com.example.accomodation_service_backend.dto.AccomodationDTO;
+import com.example.accomodation_service_backend.dto.AccomodationWeatherDTO;
 import com.example.accomodation_service_backend.model.Accommodation;
 import com.example.accomodation_service_backend.service.AccommodationService;
 import org.springframework.web.bind.annotation.*;
@@ -29,10 +30,10 @@ public class AccommodationController {
     }
 
     @GetMapping("/weather")
-    public void weather(
+    public List<AccomodationWeatherDTO> weather(
             @RequestParam(required = false) Integer month
     ) {
-        svc.search2(month);
+        return svc.search2(month);
     }
 }
 
