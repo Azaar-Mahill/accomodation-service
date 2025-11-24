@@ -1,7 +1,7 @@
 import { Injectable, signal } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { ACCOMMODATIONS } from './mock-accommodations';
-import { Accommodation, AccommodationType, EnvironmentType } from './models';
+import { Accommodation, Accommodation2, AccommodationType, EnvironmentType } from './models';
 import { environment } from '../../environments/environment';
 import { Observable } from 'rxjs';
 
@@ -45,11 +45,11 @@ export class AccommodationService {
   // TAB2 (still local mock for measures)
    searchBasedOnWeather(params: {
     month?: number | null;
-  }): Observable<Accommodation[]> {
+  }): Observable<Accommodation2[]> {
     let httpParams = new HttpParams();
     if (params.month != null) httpParams = httpParams.set('month', String(params.month));
 
-    return this.http.get<Accommodation[]>(
+    return this.http.get<Accommodation2[]>(
       `${this.baseUrl}/api/accommodations/weather`,
       { params: httpParams }
     );
