@@ -43,22 +43,16 @@ export class AccommodationService {
   }
 
   // TAB2 (still local mock for measures)
-  searchWithMeasures(params: {
-    month: number;
-    environment?: EnvironmentType;
-    type?: AccommodationType;
-  }): Array<Accommodation & { temperature: number; precipitation: number }> {
-    const data = this.all();
-    return data
-      .filter(a =>
-        (params.environment ? a.environmentType === params.environment : true) &&
-        (params.type ? a.accomodationType === params.type : true)
-      )
-      .map(a => ({
-        ...a,
-        temperature: a.avgTempByMonthC[params.month],
-        precipitation: a.avgPrecipByMonthMm[params.month],
-      }));
+   searchBasedOnWeather(params: {
+    month?: number | null;
+  }): Observable<Accommodation[]> {
+    let httpParams = new HttpParams();
+    if (params.month != null) httpParams = httpParams.set('month', String(params.month));
+
+    return this.http.get<Accommodation[]>(
+      `${this.baseUrl}/api/accommodations/weather`,
+      { params: httpParams }
+    );
   }
 
   findById(id: string) {

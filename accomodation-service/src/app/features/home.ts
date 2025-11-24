@@ -84,20 +84,27 @@ export class HomeComponent {
   }
 
   searchTab2() {
-    /*const { month, environmentType, accomodationType } = this.tab2Form.value;
-    if (!month) { this.tab2Results.set([]); return; }
+    const { month } = this.tab2Form.value;
 
-    this.svc.searchWithMeasures({
-      month,
-      environment: environmentType ?? null,      // map -> environment
-      type: accomodationType ?? null,            // map -> type
-    }).subscribe({
-      next: (list) => this.tab2Results.set(list),
-      error: (err) => {
-        console.error('Accommodation measures search failed', err);
-        this.tab2Results.set([]);
-      }
-    });*/
+    if( month != null ){
+      this.svc.searchBasedOnWeather({
+        month: month ?? null
+      }).subscribe({
+        next: (list) => this.tab2Results.set(list),
+        error: (err) => {
+          console.error('Accommodation selection search failed', err);
+          this.tab1Results.set([]);
+        }
+      });
+    }else{
+      //open a popup asking to select values in drop downs
+      this.dialog.open(InfoDialogComponent, {
+        data: {
+          title: 'Selections required',
+          message: 'Please select Month before searching.'
+        }
+      });
+    }
   }
 
 }

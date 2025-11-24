@@ -194,6 +194,14 @@ public class AccommodationService {
 
     }
 
+
+    public List<AccomodationDTO> search2(Integer month) {
+
+        List<AccomodationDTO> listOfFilteredAccommodations = new ArrayList<>();
+
+        return listOfFilteredAccommodations;
+
+    }
     public String convertToMonthSK(Integer month) {
         if(month>9){
             return "2025-"+month;

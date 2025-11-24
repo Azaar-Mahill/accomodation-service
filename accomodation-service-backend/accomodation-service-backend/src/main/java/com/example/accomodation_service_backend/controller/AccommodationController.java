@@ -28,10 +28,11 @@ public class AccommodationController {
         return svc.search(month, environmentType, accomodationType);
     }
 
-    // Optional: fetch all
-    /*@GetMapping
-    public List<Accommodation> all() {
-        return svc.findAll();
-    }*/
+    @GetMapping("/weather")
+    public List<AccomodationDTO> weather(
+            @RequestParam(required = false) Integer month
+    ) {
+        return svc.search2(month);
+    }
 }
 
