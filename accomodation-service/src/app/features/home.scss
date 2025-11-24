@@ -21,3 +21,16 @@
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
   gap: 1rem;
 }
+
+.weather-super {
+  color: green;
+}
+
+.weather-normal {
+  color: orange;   /* or 'goldenrod' / 'orange' if orange is hard to see */
+}
+
+.weather-bad {
+  color: red;
+}
+

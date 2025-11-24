@@ -267,7 +267,7 @@ public class AccommodationService {
 
             String weatherStatus;
 
-            if(weatherPoints>15){
+            if(weatherPoints>10){
                 weatherStatus = "Super";
             } else if (weatherPoints<5) {
                 weatherStatus = "Bad";

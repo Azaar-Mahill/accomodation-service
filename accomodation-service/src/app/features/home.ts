@@ -107,4 +107,18 @@ export class HomeComponent {
     }
   }
 
+  getWeatherClass(status: string | undefined): string {
+  switch (status) {
+    case 'Super':
+      return 'weather-super';
+    case 'Normal':
+      return 'weather-normal';
+    case 'Bad':
+      return 'weather-bad';
+    default:
+      return '';
+  }
+}
+
+
 }
