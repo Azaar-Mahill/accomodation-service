@@ -29,10 +29,10 @@ public class AccommodationController {
     }
 
     @GetMapping("/weather")
-    public List<AccomodationDTO> weather(
+    public void weather(
             @RequestParam(required = false) Integer month
     ) {
-        return svc.search2(month);
+        svc.search2(month);
     }
 }
 

@@ -195,11 +195,81 @@ public class AccommodationService {
     }
 
 
-    public List<AccomodationDTO> search2(Integer month) {
+    public void search2(Integer month) {
 
-        List<AccomodationDTO> listOfFilteredAccommodations = new ArrayList<>();
+        String convertedMonthSK = convertToMonthSK(month);
 
-        return listOfFilteredAccommodations;
+        List<WeatherOfAreaOfAccommodation> listOfFilteredWeatherDetailsBasedOnMonth = weatherOfAreaOfAccommodationRepository.getWeatherDetailsOfLocationBasedOnMonth(convertedMonthSK);
+
+        List<WeatherOfAreaOfAccommodation> listOfFilteredWeatherDetailsBasedOnWeather = new ArrayList<>();
+
+        for(WeatherOfAreaOfAccommodation weatherDetailsBasedOnMonth:listOfFilteredWeatherDetailsBasedOnMonth){
+
+            int weatherPoints = 0;
+
+// ---------- Precipitation scoring ----------
+// < 80           => +10
+// 80 .. 100      => +5
+// 100 .. 120     => 0 (neutral)
+// 120 .. 150     => -5
+// >= 150         => -10
+            BigDecimal P80  = new BigDecimal("80");
+            BigDecimal P100 = new BigDecimal("100");
+            BigDecimal P120 = new BigDecimal("120");
+            BigDecimal P150 = new BigDecimal("150");
+
+            if ((weatherDetailsBasedOnMonth.getAveragePrecipitation()).compareTo(P80) < 0) {
+                weatherPoints += 10;
+            } else if ((weatherDetailsBasedOnMonth.getAveragePrecipitation()).compareTo(P100) <= 0) { // 80..100
+                weatherPoints += 5;
+            } else if ((weatherDetailsBasedOnMonth.getAveragePrecipitation()).compareTo(P120) <= 0) { // 100..120
+                // neutral (no change)
+            } else if ((weatherDetailsBasedOnMonth.getAveragePrecipitation()).compareTo(P150) < 0) {  // 120..150
+                weatherPoints -= 5;
+            } else { // >= 150
+                weatherPoints -= 10;
+            }
+
+// ---------- Temperature scoring ----------
+// > 40          => -10
+// 30 .. 40      => -5
+// 26 .. 28      => +5
+// 24 .. 26      => +10
+// 22 .. 24      => +5
+// 10 .. 20      => -5
+// <= 10         => -10
+            BigDecimal T10  = new BigDecimal("10");
+            BigDecimal T20  = new BigDecimal("20");
+            BigDecimal T22  = new BigDecimal("22");
+            BigDecimal T24  = new BigDecimal("24");
+            BigDecimal T26  = new BigDecimal("26");
+            BigDecimal T28  = new BigDecimal("28");
+            BigDecimal T30  = new BigDecimal("30");
+            BigDecimal T40  = new BigDecimal("40");
+
+            if ((weatherDetailsBasedOnMonth.getAverageTemperature()).compareTo(T40) > 0) {              // > 40
+                weatherPoints -= 10;
+            } else if ((weatherDetailsBasedOnMonth.getAverageTemperature()).compareTo(T30) >= 0) {      // 30 .. 40
+                weatherPoints -= 5;
+            } else if ((weatherDetailsBasedOnMonth.getAverageTemperature()).compareTo(T26) >= 0 && (weatherDetailsBasedOnMonth.getAverageTemperature()).compareTo(T28) <= 0) { // 26 .. 28
+                weatherPoints += 5;
+            } else if ((weatherDetailsBasedOnMonth.getAverageTemperature()).compareTo(T24) >= 0 && (weatherDetailsBasedOnMonth.getAverageTemperature()).compareTo(T26) < 0) {  // 24 .. <26
+                weatherPoints += 10;
+            } else if ((weatherDetailsBasedOnMonth.getAverageTemperature()).compareTo(T22) >= 0 && (weatherDetailsBasedOnMonth.getAverageTemperature()).compareTo(T24) < 0) {  // 22 .. <24
+                weatherPoints += 5;
+            } else if ((weatherDetailsBasedOnMonth.getAverageTemperature()).compareTo(T10) >= 0 && (weatherDetailsBasedOnMonth.getAverageTemperature()).compareTo(T20) <= 0) { // 10 .. 20
+                weatherPoints -= 5;
+            } else { // <= 10
+                weatherPoints -= 10;
+            }
+
+            if(weatherPoints>5){
+                listOfFilteredWeatherDetailsBasedOnWeather.add(weatherDetailsBasedOnMonth);
+            }
+
+        }
+
+        String convertedMonthSK2 = convertToMonthSK(month);
 
     }
     public String convertToMonthSK(Integer month) {

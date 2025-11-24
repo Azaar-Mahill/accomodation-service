@@ -5,6 +5,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
+
 public interface WeatherOfAreaOfAccommodationRepository extends JpaRepository<WeatherOfAreaOfAccommodation, String> {
 
     @Query("""
@@ -15,5 +17,13 @@ public interface WeatherOfAreaOfAccommodationRepository extends JpaRepository<We
            """)
     WeatherOfAreaOfAccommodation getWeatherDetailsOfLocation(
             @Param("locationSKOfAccomodation") String locationSKOfAccomodation,
+            @Param("month") String month);
+
+    @Query("""
+           SELECT s
+           FROM WeatherOfAreaOfAccommodation s
+           WHERE LOWER(s.monthSk) = LOWER(:month)
+           """)
+    List<WeatherOfAreaOfAccommodation> getWeatherDetailsOfLocationBasedOnMonth(
             @Param("month") String month);
 }
