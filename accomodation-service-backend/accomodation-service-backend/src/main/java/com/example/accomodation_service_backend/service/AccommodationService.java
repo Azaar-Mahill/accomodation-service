@@ -141,37 +141,46 @@ public class AccommodationService {
             }
 
 // ---------- Temperature scoring ----------
-// > 40          => -10
-// 30 .. 40      => -5
-// 26 .. 28      => +5
-// 24 .. 26      => +10
-// 22 .. 24      => +5
-// 10 .. 20      => -5
-// <= 10         => -10
+//  > 40          => -10
+//  35 .. 40      => -5
+//  32 .. 35      => 0
+//  28 .. 32      => +5
+//  23 .. 28      => +10
+//  19 .. 23      => +5
+//  15 .. 19      => 0
+//  10 .. 15      => -5
+//  < 10          => -10
+
             BigDecimal T10  = new BigDecimal("10");
-            BigDecimal T20  = new BigDecimal("20");
-            BigDecimal T22  = new BigDecimal("22");
-            BigDecimal T24  = new BigDecimal("24");
-            BigDecimal T26  = new BigDecimal("26");
+            BigDecimal T15  = new BigDecimal("15");
+            BigDecimal T19  = new BigDecimal("19");
+            BigDecimal T23  = new BigDecimal("23");
             BigDecimal T28  = new BigDecimal("28");
-            BigDecimal T30  = new BigDecimal("30");
+            BigDecimal T32  = new BigDecimal("32");
+            BigDecimal T35  = new BigDecimal("35");
             BigDecimal T40  = new BigDecimal("40");
 
-            if (temperature.compareTo(T40) > 0) {              // > 40
+
+            if (temperature.compareTo(T40) > 0) {                                         // > 40
                 weatherPoints -= 10;
-            } else if (temperature.compareTo(T30) >= 0) {      // 30 .. 40
+            } else if (temperature.compareTo(T35) >= 0 && temperature.compareTo(T40) <= 0) {  // 35 .. 40
                 weatherPoints -= 5;
-            } else if (temperature.compareTo(T26) >= 0 && temperature.compareTo(T28) <= 0) { // 26 .. 28
+            } else if (temperature.compareTo(T32) >= 0 && temperature.compareTo(T35) < 0) {   // 32 .. <35
+                // 0 points (no change)
+            } else if (temperature.compareTo(T28) >= 0 && temperature.compareTo(T32) < 0) {   // 28 .. <32
                 weatherPoints += 5;
-            } else if (temperature.compareTo(T24) >= 0 && temperature.compareTo(T26) < 0) {  // 24 .. <26
+            } else if (temperature.compareTo(T23) >= 0 && temperature.compareTo(T28) < 0) {   // 23 .. <28
                 weatherPoints += 10;
-            } else if (temperature.compareTo(T22) >= 0 && temperature.compareTo(T24) < 0) {  // 22 .. <24
+            } else if (temperature.compareTo(T19) >= 0 && temperature.compareTo(T23) < 0) {   // 19 .. <23
                 weatherPoints += 5;
-            } else if (temperature.compareTo(T10) >= 0 && temperature.compareTo(T20) <= 0) { // 10 .. 20
+            } else if (temperature.compareTo(T15) >= 0 && temperature.compareTo(T19) < 0) {   // 15 .. <19
+                // 0 points (no change)
+            } else if (temperature.compareTo(T10) >= 0 && temperature.compareTo(T15) < 0) {   // 10 .. <15
                 weatherPoints -= 5;
-            } else { // <= 10
+            } else {                                                                   // < 10
                 weatherPoints -= 10;
             }
+
 
             if(weatherPoints>5){
                 listOfAccommodationsFoundFromFilteringWeather.add(accommodationsFoundFromFilteringSafety);
@@ -233,37 +242,47 @@ public class AccommodationService {
             }
 
 // ---------- Temperature scoring ----------
-// > 40          => -10
-// 30 .. 40      => -5
-// 26 .. 28      => +5
-// 24 .. 26      => +10
-// 22 .. 24      => +5
-// 10 .. 20      => -5
-// <= 10         => -10
+//  > 40          => -10
+//  35 .. 40      => -5
+//  32 .. 35      => 0
+//  28 .. 32      => +5
+//  23 .. 28      => +10
+//  19 .. 23      => +5
+//  15 .. 19      => 0
+//  10 .. 15      => -5
+//  < 10          => -10
+
             BigDecimal T10  = new BigDecimal("10");
-            BigDecimal T20  = new BigDecimal("20");
-            BigDecimal T22  = new BigDecimal("22");
-            BigDecimal T24  = new BigDecimal("24");
-            BigDecimal T26  = new BigDecimal("26");
+            BigDecimal T15  = new BigDecimal("15");
+            BigDecimal T19  = new BigDecimal("19");
+            BigDecimal T23  = new BigDecimal("23");
             BigDecimal T28  = new BigDecimal("28");
-            BigDecimal T30  = new BigDecimal("30");
+            BigDecimal T32  = new BigDecimal("32");
+            BigDecimal T35  = new BigDecimal("35");
             BigDecimal T40  = new BigDecimal("40");
 
-            if ((weatherDetailsBasedOnMonth.getAverageTemperature()).compareTo(T40) > 0) {              // > 40
+            BigDecimal avgTemp = weatherDetailsBasedOnMonth.getAverageTemperature();
+
+            if (avgTemp.compareTo(T40) > 0) {                                         // > 40
                 weatherPoints -= 10;
-            } else if ((weatherDetailsBasedOnMonth.getAverageTemperature()).compareTo(T30) >= 0) {      // 30 .. 40
+            } else if (avgTemp.compareTo(T35) >= 0 && avgTemp.compareTo(T40) <= 0) {  // 35 .. 40
                 weatherPoints -= 5;
-            } else if ((weatherDetailsBasedOnMonth.getAverageTemperature()).compareTo(T26) >= 0 && (weatherDetailsBasedOnMonth.getAverageTemperature()).compareTo(T28) <= 0) { // 26 .. 28
+            } else if (avgTemp.compareTo(T32) >= 0 && avgTemp.compareTo(T35) < 0) {   // 32 .. <35
+                // 0 points (no change)
+            } else if (avgTemp.compareTo(T28) >= 0 && avgTemp.compareTo(T32) < 0) {   // 28 .. <32
                 weatherPoints += 5;
-            } else if ((weatherDetailsBasedOnMonth.getAverageTemperature()).compareTo(T24) >= 0 && (weatherDetailsBasedOnMonth.getAverageTemperature()).compareTo(T26) < 0) {  // 24 .. <26
+            } else if (avgTemp.compareTo(T23) >= 0 && avgTemp.compareTo(T28) < 0) {   // 23 .. <28
                 weatherPoints += 10;
-            } else if ((weatherDetailsBasedOnMonth.getAverageTemperature()).compareTo(T22) >= 0 && (weatherDetailsBasedOnMonth.getAverageTemperature()).compareTo(T24) < 0) {  // 22 .. <24
+            } else if (avgTemp.compareTo(T19) >= 0 && avgTemp.compareTo(T23) < 0) {   // 19 .. <23
                 weatherPoints += 5;
-            } else if ((weatherDetailsBasedOnMonth.getAverageTemperature()).compareTo(T10) >= 0 && (weatherDetailsBasedOnMonth.getAverageTemperature()).compareTo(T20) <= 0) { // 10 .. 20
+            } else if (avgTemp.compareTo(T15) >= 0 && avgTemp.compareTo(T19) < 0) {   // 15 .. <19
+                // 0 points (no change)
+            } else if (avgTemp.compareTo(T10) >= 0 && avgTemp.compareTo(T15) < 0) {   // 10 .. <15
                 weatherPoints -= 5;
-            } else { // <= 10
+            } else {                                                                   // < 10
                 weatherPoints -= 10;
             }
+
 
             String weatherStatus;
 
