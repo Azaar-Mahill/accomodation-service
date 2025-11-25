@@ -44,7 +44,7 @@
   </mat-tab>
 
   <!-- TAB2 -->
-  <mat-tab label="Weather of Accommodations">
+  <mat-tab label="Weather and Safety of Accommodations">
     <form class="panel" [formGroup]="tab2Form">
       <div class="content-layout">
         <div class="filters">
@@ -63,16 +63,26 @@
           <mat-card *ngFor="let a of tab2Results()">
             <mat-card-title>Name of Accommodation: {{ a.accommodationName }}</mat-card-title>
             <mat-card-content>
+              <p><strong>Address:</strong> {{ a.accommodationAddress }}</p>
               <p><strong>Environment:</strong> {{ a.environment}}</p>
             </mat-card-content>
             <mat-card-content>
-              <p><strong>Address:</strong> {{ a.accommodationAddress }}</p>
               <p><strong>Average temperature:</strong> {{ a.temperature }} °C</p>
               <p><strong>Average precipitation:</strong> {{ a.precipitation }} mm</p>
               <p>
                 <strong>Weather Status: </strong>
                 <span [ngClass]="getWeatherClass(a.weatherStatus)">
                   {{ a.weatherStatus }}
+                </span>
+              </p>
+            </mat-card-content>
+            <mat-card-content>
+              <p><strong>Accident rate:</strong> {{ a.accidentRate}}</p>
+              <p><strong>Crime rate:</strong> {{ a.crimeRate }}</p>
+              <p>
+                <strong>Safety Status: </strong>
+                <span [ngClass]="getWeatherClass(a.safetyStatus)">
+                  {{ a.safetyStatus }}
                 </span>
               </p>
             </mat-card-content>
@@ -86,7 +96,7 @@
   </mat-tab>
 
 <!-- TAB3 -->
-  <mat-tab label="Safety of Accommodations">
+  <mat-tab label="Type of Accommodations">
     <form class="panel" [formGroup]="tab2Form">
       <div class="content-layout">
         <div class="filters">

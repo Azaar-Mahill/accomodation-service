@@ -294,6 +294,37 @@ public class AccommodationService {
                 weatherStatus = "Normal";
             }
 
+            //////////////
+            SafetyOfAreaOfAccommodation safetyOfAreaOfAccommodation = safetyOfAreaOfAccommodationRepository.getSafetyDetailsOfLocation(weatherDetailsBasedOnMonth.getAccommodationLocationSk(), convertedMonthSK);
+
+            BigDecimal accident = (safetyOfAreaOfAccommodation != null && safetyOfAreaOfAccommodation.getAccidentRate() != null)
+                    ? safetyOfAreaOfAccommodation.getAccidentRate()
+                    : BigDecimal.ZERO;
+
+            BigDecimal crime = (safetyOfAreaOfAccommodation != null && safetyOfAreaOfAccommodation.getCrimeRate() != null)
+                    ? safetyOfAreaOfAccommodation.getCrimeRate()
+                    : BigDecimal.ZERO;
+
+            BigDecimal safetyRateOfAccommodation = (weightOfAccidents.multiply(accident)).add(weightOfCrimes.multiply(crime));
+
+            String safetyStatus;
+
+            BigDecimal ONE  = new BigDecimal("1.0");
+            BigDecimal TWO  = new BigDecimal("2.0");
+
+// safetyRate <= 1  -> Super
+// 1 < safetyRate <= 2 -> Normal
+// safetyRate > 2  -> Bad
+            if (safetyRateOfAccommodation.compareTo(ONE) <= 0) {
+                safetyStatus = "Super";
+            } else if (safetyRateOfAccommodation.compareTo(TWO) <= 0) {
+                safetyStatus = "Normal";
+            } else {
+                safetyStatus = "Bad";
+            }
+
+            //////////////
+
             WeatherOfAreaOfAccommodation2 weatherOfAreaOfAccommodation2 = new WeatherOfAreaOfAccommodation2();
 
             weatherOfAreaOfAccommodation2.setWeatherOfAreaOfAccommodationSk(weatherDetailsBasedOnMonth.getWeatherOfAreaOfAccommodationSk());
@@ -303,6 +334,9 @@ public class AccommodationService {
             weatherOfAreaOfAccommodation2.setAveragePrecipitation(weatherDetailsBasedOnMonth.getAveragePrecipitation());
             weatherOfAreaOfAccommodation2.setAccommodationLocationSk((weatherDetailsBasedOnMonth.getAccommodationLocationSk()));
             weatherOfAreaOfAccommodation2.setWeatherStatus(weatherStatus);
+            weatherOfAreaOfAccommodation2.setCrimeRate(crime);
+            weatherOfAreaOfAccommodation2.setAccidentRate(accident);
+            weatherOfAreaOfAccommodation2.setSafetyStatus(safetyStatus);
 
             listOfFilteredWeatherDetailsBasedOnWeather.add(weatherOfAreaOfAccommodation2);
 
@@ -329,6 +363,10 @@ public class AccommodationService {
 
             accomodationWeatherDTO.setWeatherStatus(filteredWeatherDetailsBasedOnWeather.getWeatherStatus());
             accomodationWeatherDTO.setEnvironment(accommodationLocationRepository.getEnvironment(accommodationLocationSk));
+
+            accomodationWeatherDTO.setAccidentRate(filteredWeatherDetailsBasedOnWeather.getAccidentRate());
+            accomodationWeatherDTO.setCrimeRate(filteredWeatherDetailsBasedOnWeather.getCrimeRate());
+            accomodationWeatherDTO.setSafetyStatus(filteredWeatherDetailsBasedOnWeather.getSafetyStatus());
 
             listOfFilteredAccommodations.add(accomodationWeatherDTO);
 

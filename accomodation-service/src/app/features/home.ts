@@ -92,7 +92,7 @@ export class HomeComponent {
       }).subscribe({
         next: (list) => this.tab2Results.set(list),
         error: (err) => {
-          console.error('Accommodation selection search failed', err);
+          console.error('Month selection search failed', err);
           this.tab2Results.set([]);
         }
       });

@@ -29,4 +29,10 @@ public class WeatherOfAreaOfAccommodation2 {
     private String accommodationLocationSk;
 
     private String weatherStatus;
+
+    private BigDecimal crimeRate;
+
+    private BigDecimal accidentRate;
+
+    private String safetyStatus;
 }
