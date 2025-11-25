@@ -97,37 +97,41 @@
 
 <!-- TAB3 -->
   <mat-tab label="Type of Accommodations">
-    <form class="panel" [formGroup]="tab2Form">
+    <form class="panel" [formGroup]="tab3Form">
       <div class="content-layout">
         <div class="filters">
           <mat-form-field appearance="outline">
-            <mat-label>Month hope to visit</mat-label>
-            <mat-select formControlName="month" required>
-              <mat-option *ngFor="let m of months" [value]="m.value">{{ m.label }}</mat-option>
+            <mat-label>Type of Accommodation</mat-label>
+            <mat-select formControlName="accomodationType">
+              <mat-option *ngFor="let t of accomodationTypes" [value]="t">{{ t }}</mat-option>
             </mat-select>
           </mat-form-field>
 
-
-          <button mat-raised-button color="primary" type="button" (click)="searchTab2()">Search</button>
+          <button mat-raised-button color="primary" type="button" (click)="searchTab3()">Search</button>
         </div>
 
         <div class="results">
-          <mat-card *ngFor="let a of tab2Results()">
-            <mat-card-title>Name of Accommodation: {{ a.accommodationName }}</mat-card-title>
+          <mat-card *ngFor="let a of tab3Results()">
+            <mat-card-title>Name of Accommodation: {{ a.name }}</mat-card-title>
             <mat-card-content>
-              <p><strong>Environment:</strong> {{ a.environment}}</p>
+              <p><strong>Environment:</strong> {{ a.environmentType }}</p>
             </mat-card-content>
             <mat-card-content>
-              <p><strong>Address:</strong> {{ a.accommodationAddress }}</p>
-              <p><strong>Average temperature:</strong> {{ a.temperature }} °C</p>
-              <p><strong>Average precipitation:</strong> {{ a.precipitation }} mm</p>
-              <p>
-                <strong>Weather Status: </strong>
-                <span [ngClass]="getWeatherClass(a.weatherStatus)">
-                  {{ a.weatherStatus }}
-                </span>
-              </p>
+              <p><strong>Address:</strong> {{ a.address }}</p>
             </mat-card-content>
+
+            <!-- ✅ Bar chart of temperature by month -->
+            <mat-card-content>
+              <div style="height: 250px;">
+                <canvas
+                  baseChart
+                  [type]="'bar'"
+                  [data]="getTempChartData(a)"
+                  [options]="barOptions">
+                </canvas>
+              </div>
+            </mat-card-content>
+
             <mat-card-actions>
               <a mat-button color="accent" [routerLink]="['/book', a.id]">Click to book</a>
             </mat-card-actions>
@@ -136,4 +140,5 @@
       </div>
     </form>
   </mat-tab>
+
 </mat-tab-group>

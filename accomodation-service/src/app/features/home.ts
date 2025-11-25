@@ -12,6 +12,11 @@ import { AccommodationService } from '../core/accommodation.service';
 import { AccommodationType, EnvironmentType } from '../core/models';
 import { InfoDialogComponent } from './info-dialog.component';
 import { inject } from '@angular/core';
+import { BaseChartDirective } from 'ng2-charts';          // ✅ instead of NgChartsModule
+import { ChartConfiguration } from 'chart.js';
+import { ACCOMMODATIONS } from '../core/mock-accommodations';
+import { Accommodation } from '../core/models';
+
 
 @Component({
   selector: 'app-home',
@@ -19,7 +24,7 @@ import { inject } from '@angular/core';
   imports: [
     CommonModule, ReactiveFormsModule, RouterModule,
     MatTabsModule, MatFormFieldModule, MatSelectModule, MatButtonModule, MatCardModule,
-    MatDialogModule
+    MatDialogModule, BaseChartDirective,
   ],
   templateUrl: './home.html',
   styleUrls: ['./home.scss']
@@ -32,14 +37,59 @@ export class HomeComponent {
   environmentTypes: EnvironmentType[] = ['Any','Beach','Hill Country','City','Wildlife','Cultural'];
   accomodationTypes: AccommodationType[] = ['Any','Hotel','Resort','Villa','Guest House','Hostel'];
 
+  // all mock data
+  private allAccommodations: Accommodation[] = ACCOMMODATIONS;
+
   // declare with definite assignment; initialize in constructor
   tab1Form!: FormGroup;
   tab2Form!: FormGroup;
+  tab3Form!: FormGroup;
 
   tab1Results = signal<any[]>([]);
   tab2Results = signal<any[]>([]);
+  tab3Results = signal<any[]>([]);
 
   private dialog = inject(MatDialog);
+
+    // labels for the 12 months
+  monthLabels: string[] = [
+    'Jan','Feb','Mar','Apr','May','Jun',
+    'Jul','Aug','Sep','Oct','Nov','Dec'
+  ];
+
+  // Chart options used in the template
+  barOptions: ChartConfiguration['options'] = {
+    responsive: true,
+    plugins: {
+      legend: { display: false }
+    },
+    scales: {
+      x: {},
+      y: {
+        beginAtZero: true,
+        title: { display: true, text: '°C' }
+      }
+    }
+  };
+
+  // Build chart data for one accommodation
+  getTempChartData(a: any): ChartConfiguration['data'] {
+    const temps: number[] = this.monthLabels.map((_, idx) => {
+      // avgTempByMonthC has keys 1..12
+      return a?.avgTempByMonthC?.[idx + 1] ?? 0;
+    });
+
+    return {
+      labels: this.monthLabels,
+      datasets: [
+        {
+          data: temps,
+          label: 'Avg Temperature (°C)'
+        }
+      ]
+    };
+  }
+
 
   constructor(private fb: FormBuilder, private svc: AccommodationService) {
     this.tab1Form = this.fb.group({
@@ -52,6 +102,10 @@ export class HomeComponent {
       month: [null as number | null],
       environmentType: [null as EnvironmentType | null],
       accomodationType: [null as AccommodationType | null],
+    });
+
+    this.tab3Form = this.fb.group({
+      accomodationType: [null as AccommodationType | null]
     });
   }
 
@@ -108,17 +162,41 @@ export class HomeComponent {
   }
 
   getWeatherClass(status: string | undefined): string {
-  switch (status) {
-    case 'Super':
-      return 'weather-super';
-    case 'Normal':
-      return 'weather-normal';
-    case 'Bad':
-      return 'weather-bad';
-    default:
-      return '';
+    switch (status) {
+      case 'Super':
+        return 'weather-super';
+      case 'Normal':
+        return 'weather-normal';
+      case 'Bad':
+        return 'weather-bad';
+      default:
+        return '';
+    }
   }
-}
+
+    // Search for Tab 3 (Type of Accommodation)
+  searchTab3(): void {
+    const accomodationType = this.tab3Form.value.accomodationType ?? null;
+
+    if (accomodationType == null) {
+      this.dialog.open(InfoDialogComponent, {
+        data: {
+          title: 'Selections required',
+          message: 'Please select a Type of Accommodation before searching.'
+        }
+      });
+      return;
+    }
+
+    let list = [...this.allAccommodations];
+
+    if (accomodationType !== 'Any') {
+      list = list.filter(a => a.accomodationType === accomodationType);
+    }
+
+    this.tab3Results.set(list);
+  }
+
 
 
 }
