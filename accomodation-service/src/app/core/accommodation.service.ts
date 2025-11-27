@@ -1,7 +1,7 @@
 import { Injectable, signal } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { ACCOMMODATIONS } from './mock-accommodations';
-import { Accommodation, Accommodation2, AccommodationType, EnvironmentType } from './models';
+import { Accommodation, Accommodation2, Accommodation3, AccommodationType, EnvironmentType } from './models';
 import { environment } from '../../environments/environment';
 import { Observable } from 'rxjs';
 
@@ -61,11 +61,11 @@ export class AccommodationService {
 
   accomodationTypeInformation(params: {
     accomodationType?: AccommodationType | null | null;
-  }): Observable<Accommodation2[]> {
+  }): Observable<Accommodation3[]> {
     let httpParams = new HttpParams();
     if (params.accomodationType) httpParams = httpParams.set('accomodationType', params.accomodationType);
 
-    return this.http.get<Accommodation2[]>(
+    return this.http.get<Accommodation3[]>(
       `${this.baseUrl}/api/accommodations/accomodationTypeInformation`,
       { params: httpParams }
     );
