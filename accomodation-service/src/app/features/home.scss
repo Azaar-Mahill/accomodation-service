@@ -49,22 +49,8 @@
   height: 150px;    /* same as your inline style before */
 }
 
-/*.accommodation-card {
-  width: 100%;
-  max-width: 2000px;   
-  margin: 16px auto;
-}
 
-.results {
-  display: flex;
-  flex-direction: column;
-}
-
-.accommodation-card {
-  width: 100%;
-}*/
-
-.results {
+.results3 {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr)); /* 2 cards per row */
   gap: 16px; /* space between cards */
