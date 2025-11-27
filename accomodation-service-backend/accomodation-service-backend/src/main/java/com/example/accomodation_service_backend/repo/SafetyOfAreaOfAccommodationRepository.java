@@ -33,4 +33,13 @@ public interface SafetyOfAreaOfAccommodationRepository extends JpaRepository<Saf
     SafetyOfAreaOfAccommodation getSafetyDetailsOfLocation(
             @Param("locationSKOfAccomodation") String locationSKOfAccomodation,
             @Param("month") String month);
+
+    @Query("""
+           SELECT s
+           FROM SafetyOfAreaOfAccommodation s
+           WHERE LOWER(s.accommodationLocationSk) = LOWER(:locationSKOfAccomodation)
+
+           """)
+    List<SafetyOfAreaOfAccommodation> getSafetyDetailsOfLocationUsingLocationSKOfAccomodation(
+            @Param("locationSKOfAccomodation") String locationSKOfAccomodation);
 }

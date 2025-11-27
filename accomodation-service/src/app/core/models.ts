@@ -37,4 +37,5 @@ export interface Accommodation3 {
   avgPrecipByMonthMm: Record<number, number>;    // 1..12
   bookingUrl?: string;
   weatherStatus?: string;
+  avgCrimeRateByMonth: Record<number, number>; 
 }

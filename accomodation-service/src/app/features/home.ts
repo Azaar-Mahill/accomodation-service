@@ -88,6 +88,21 @@ export class HomeComponent {
     }
   };
 
+  CrimeRateBarOptions: ChartConfiguration['options'] = {
+    responsive: true,
+    plugins: {
+      legend: { display: false }
+    },
+    scales: {
+      x: {},
+      y: {
+        beginAtZero: true,
+        max: 1,
+        title: { display: true, text: '°C' }
+      }
+    }
+  };
+
   // Build chart data for one accommodation
   getTempChartData(a: any): ChartConfiguration['data'] {
     const temps: number[] = this.monthLabels.map((_, idx) => {
@@ -108,7 +123,6 @@ export class HomeComponent {
 
   getPrecipitationChartData(a: any): ChartConfiguration['data'] {
     const temps: number[] = this.monthLabels.map((_, idx1) => {
-      // avgPrecipByMonthMm has keys 1..12
       return a?.avgPrecipByMonthMm?.[idx1 + 1] ?? 0;
     });
 
@@ -118,6 +132,22 @@ export class HomeComponent {
         {
           data: temps,
           label: 'Avg Precipitation (mm)'
+        }
+      ]
+    };
+  }
+
+  getCrimeRateChartData(a: any): ChartConfiguration['data'] {
+    const temps: number[] = this.monthLabels.map((_, idx2) => {
+      return a?.avgCrimeRateByMonth?.[idx2 + 1] ?? 0;
+    });
+
+    return {
+      labels: this.monthLabels,
+      datasets: [
+        {
+          data: temps,
+          label: 'Avg Crime Rate Per Month'
         }
       ]
     };

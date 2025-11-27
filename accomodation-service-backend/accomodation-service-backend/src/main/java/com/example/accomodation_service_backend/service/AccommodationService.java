@@ -448,6 +448,33 @@ public class AccommodationService {
 
             listOfAccomodationTypeDTO.add(accomodationTypeDTO);
 
+            ////////////////////////////////
+            List<SafetyOfAreaOfAccommodation> listOfSafetyOfAreaOfAccommodation = safetyOfAreaOfAccommodationRepository.getSafetyDetailsOfLocationUsingLocationSKOfAccomodation(accommodationLocationSk);
+
+            Map<Integer, BigDecimal> avgCrimeRateByMonth = new HashMap<>();
+
+            for (SafetyOfAreaOfAccommodation safetyOfAreaOfAccommodation : listOfSafetyOfAreaOfAccommodation) {
+
+                String monthSk = safetyOfAreaOfAccommodation.getMonthSk();
+
+                // safety check – avoid StringIndexOutOfBoundsException
+                if (monthSk == null || monthSk.length() < 7) {
+                    continue; // or handle error
+                }
+
+                // last two characters are the month: positions 5 and 6 (0-based)
+                int month = Integer.parseInt(monthSk.substring(5, 7));
+                // e.g. "2024-01" -> "01" -> 1
+                //      "2024-10" -> "10" -> 10
+
+                avgCrimeRateByMonth.put(month, safetyOfAreaOfAccommodation.getCrimeRate());
+
+            }
+            accomodationTypeDTO.setAvgCrimeRateByMonth(avgCrimeRateByMonth);
+
+            listOfAccomodationTypeDTO.add(accomodationTypeDTO);
+            ////////////////////////////////
+
         }
 
         return listOfAccomodationTypeDTO;
