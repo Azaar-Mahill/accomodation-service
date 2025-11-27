@@ -1,17 +1,17 @@
 package com.example.accomodation_service_backend.service;
 
 import com.example.accomodation_service_backend.dto.AccomodationDTO;
+import com.example.accomodation_service_backend.dto.AccomodationTypeDTO;
 import com.example.accomodation_service_backend.dto.AccomodationWeatherDTO;
-import com.example.accomodation_service_backend.model.Accommodation;
-import com.example.accomodation_service_backend.model.SafetyOfAreaOfAccommodation;
-import com.example.accomodation_service_backend.model.WeatherOfAreaOfAccommodation;
-import com.example.accomodation_service_backend.model.WeatherOfAreaOfAccommodation2;
+import com.example.accomodation_service_backend.model.*;
 import com.example.accomodation_service_backend.repo.*;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class AccommodationService {
@@ -384,8 +384,71 @@ public class AccommodationService {
 
     }
 
-    /*public List<Accommodation> findAll() {
-        return repo.findAll();
-    }*/
+    public List<AccomodationTypeDTO> search3(String accomodationType) {
+
+        List<String> listOfAccommodationTypeSks;
+
+        if ("Any".equalsIgnoreCase(accomodationType)) {
+            listOfAccommodationTypeSks = accommodationTypeRepository.findAllAccommodationTypeSks();
+        } else {
+            listOfAccommodationTypeSks = accommodationTypeRepository.findAccommodationTypeSksByTypeName(accomodationType);
+        }
+
+        List<Accommodation> listOfAccommodations = new ArrayList<>();
+
+        for(String accommodationTypeSk: listOfAccommodationTypeSks){
+            List<Accommodation> AccommodationsWithSameType = accommodationRepository.getAllAccomodationsFromTypeSK(accommodationTypeSk);
+
+            for(Accommodation accommodationWithSameType: AccommodationsWithSameType) {
+                listOfAccommodations.add(accommodationWithSameType);
+            }
+
+        }
+
+        List<AccomodationTypeDTO> listOfAccomodationTypeDTO = new ArrayList<>();
+        
+        for(Accommodation accommodation: listOfAccommodations){
+            AccomodationTypeDTO accomodationTypeDTO = new AccomodationTypeDTO();
+            accomodationTypeDTO.setAccommodationName(accommodation.getAccommodationName());
+            String accommodationLocationSk = accommodation.getAccommodationLocationSk();
+            String Environment = accommodationLocationRepository.getEnvironment(accommodationLocationSk);
+            accomodationTypeDTO.setEnvironment(Environment);
+
+            String province = accommodationLocationRepository.getProvince(accommodationLocationSk);
+            String district = accommodationLocationRepository.getDistrict(accommodationLocationSk);
+            String city = accommodationLocationRepository.getCity(accommodationLocationSk);
+            String address = String.format("%s, %s, %s province", city, district, province);
+            accomodationTypeDTO.setAccommodationAddress(address);
+
+            List<WeatherOfAreaOfAccommodation> listOfWeatherOfAreaOfAccommodation = weatherOfAreaOfAccommodationRepository.getAllWeatherDetailsOfLocation(accommodationLocationSk);
+
+            Map<Integer, BigDecimal> avgTempByMonthC = new HashMap<>();
+
+            for (WeatherOfAreaOfAccommodation weatherOfAreaOfAccommodation : listOfWeatherOfAreaOfAccommodation) {
+
+                String monthSk = weatherOfAreaOfAccommodation.getMonthSk();
+
+                // safety check – avoid StringIndexOutOfBoundsException
+                if (monthSk == null || monthSk.length() < 7) {
+                    continue; // or handle error
+                }
+
+                // last two characters are the month: positions 5 and 6 (0-based)
+                int month = Integer.parseInt(monthSk.substring(5, 7));
+                // e.g. "2024-01" -> "01" -> 1
+                //      "2024-10" -> "10" -> 10
+
+                avgTempByMonthC.put(month, weatherOfAreaOfAccommodation.getAverageTemperature());
+
+            }
+            accomodationTypeDTO.setAvgTempByMonthC(avgTempByMonthC);
+
+            listOfAccomodationTypeDTO.add(accomodationTypeDTO);
+
+        }
+
+        return listOfAccomodationTypeDTO;
+
+    }
 }
 

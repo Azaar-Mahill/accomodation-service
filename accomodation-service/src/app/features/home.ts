@@ -176,7 +176,7 @@ export class HomeComponent {
 
     // Search for Tab 3 (Type of Accommodation)
   searchTab3(): void {
-    const accomodationType = this.tab3Form.value.accomodationType ?? null;
+    /*const accomodationType = this.tab3Form.value.accomodationType ?? null;
 
     if (accomodationType == null) {
       this.dialog.open(InfoDialogComponent, {
@@ -194,7 +194,29 @@ export class HomeComponent {
       list = list.filter(a => a.accomodationType === accomodationType);
     }
 
-    this.tab3Results.set(list);
+    this.tab3Results.set(list);*/
+
+    const { accomodationType } = this.tab3Form.value;
+
+    if( accomodationType != null ){
+      this.svc.accomodationTypeInformation({
+        accomodationType: accomodationType ?? null
+      }).subscribe({
+        next: (list) => this.tab3Results.set(list),
+        error: (err) => {
+          console.error('accomodationType selection search failed', err);
+          this.tab3Results.set([]);
+        }
+      });
+    }else{
+      //open a popup asking to select values in drop downs
+      this.dialog.open(InfoDialogComponent, {
+        data: {
+          title: 'Selections required',
+          message: 'Please select accomodationType before searching.'
+        }
+      });
+    }
   }
 
 

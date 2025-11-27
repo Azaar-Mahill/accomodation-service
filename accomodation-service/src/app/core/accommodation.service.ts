@@ -58,4 +58,17 @@ export class AccommodationService {
   findById(id: string) {
     return this.all().find(a => a.id === id) || null;
   }
+
+  accomodationTypeInformation(params: {
+    accomodationType?: AccommodationType | null | null;
+  }): Observable<Accommodation2[]> {
+    let httpParams = new HttpParams();
+    if (params.accomodationType) httpParams = httpParams.set('accomodationType', params.accomodationType);
+
+    return this.http.get<Accommodation2[]>(
+      `${this.baseUrl}/api/accommodations/accomodationTypeInformation`,
+      { params: httpParams }
+    );
+  }
+
 }

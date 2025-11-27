@@ -26,4 +26,12 @@ public interface WeatherOfAreaOfAccommodationRepository extends JpaRepository<We
            """)
     List<WeatherOfAreaOfAccommodation> getWeatherDetailsOfLocationBasedOnMonth(
             @Param("month") String month);
+
+    @Query("""
+           SELECT s
+           FROM WeatherOfAreaOfAccommodation s
+           WHERE LOWER(s.accommodationLocationSk) = LOWER(:locationSKOfAccomodation)
+           """)
+    List<WeatherOfAreaOfAccommodation> getAllWeatherDetailsOfLocation(
+            @Param("locationSKOfAccomodation") String locationSKOfAccomodation);
 }
