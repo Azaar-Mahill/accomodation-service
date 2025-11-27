@@ -23,4 +23,6 @@ public class AccomodationTypeDTO {
     private String accommodationAddress;
 
     private Map<Integer, BigDecimal> avgTempByMonthC;
+
+    private Map<Integer, BigDecimal> avgPrecipByMonthMm;
 }

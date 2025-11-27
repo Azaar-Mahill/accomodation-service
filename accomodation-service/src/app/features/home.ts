@@ -58,7 +58,7 @@ export class HomeComponent {
   ];
 
   // Chart options used in the template
-  barOptions: ChartConfiguration['options'] = {
+  temperatureBarOptions: ChartConfiguration['options'] = {
     responsive: true,
     plugins: {
       legend: { display: false }
@@ -68,6 +68,21 @@ export class HomeComponent {
       y: {
         beginAtZero: true,
         max: 60,
+        title: { display: true, text: '°C' }
+      }
+    }
+  };
+
+  precipitationBarOptions: ChartConfiguration['options'] = {
+    responsive: true,
+    plugins: {
+      legend: { display: false }
+    },
+    scales: {
+      x: {},
+      y: {
+        beginAtZero: true,
+        max: 200,
         title: { display: true, text: '°C' }
       }
     }
@@ -86,6 +101,23 @@ export class HomeComponent {
         {
           data: temps,
           label: 'Avg Temperature (°C)'
+        }
+      ]
+    };
+  }
+
+  getPrecipitationChartData(a: any): ChartConfiguration['data'] {
+    const temps: number[] = this.monthLabels.map((_, idx1) => {
+      // avgPrecipByMonthMm has keys 1..12
+      return a?.avgPrecipByMonthMm?.[idx1 + 1] ?? 0;
+    });
+
+    return {
+      labels: this.monthLabels,
+      datasets: [
+        {
+          data: temps,
+          label: 'Avg Precipitation (mm)'
         }
       ]
     };

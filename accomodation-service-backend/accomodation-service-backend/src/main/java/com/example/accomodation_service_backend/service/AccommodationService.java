@@ -423,6 +423,7 @@ public class AccommodationService {
             List<WeatherOfAreaOfAccommodation> listOfWeatherOfAreaOfAccommodation = weatherOfAreaOfAccommodationRepository.getAllWeatherDetailsOfLocation(accommodationLocationSk);
 
             Map<Integer, BigDecimal> avgTempByMonthC = new HashMap<>();
+            Map<Integer, BigDecimal> avgPrecipByMonthMm = new HashMap<>();
 
             for (WeatherOfAreaOfAccommodation weatherOfAreaOfAccommodation : listOfWeatherOfAreaOfAccommodation) {
 
@@ -439,9 +440,11 @@ public class AccommodationService {
                 //      "2024-10" -> "10" -> 10
 
                 avgTempByMonthC.put(month, weatherOfAreaOfAccommodation.getAverageTemperature());
+                avgPrecipByMonthMm.put(month, weatherOfAreaOfAccommodation.getAveragePrecipitation());
 
             }
             accomodationTypeDTO.setAvgTempByMonthC(avgTempByMonthC);
+            accomodationTypeDTO.setAvgPrecipByMonthMm(avgPrecipByMonthMm);
 
             listOfAccomodationTypeDTO.add(accomodationTypeDTO);
 

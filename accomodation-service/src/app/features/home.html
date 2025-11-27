@@ -123,12 +123,25 @@
             <p><strong>Average temperature graph</strong></p>
             <!-- ✅ Bar chart of temperature by month -->
             <mat-card-content>
-              <div style="height: 250px;">
+              <div style="height: 150px;">
                 <canvas
                   baseChart
                   [type]="'bar'"
                   [data]="getTempChartData(a)"
-                  [options]="barOptions">
+                  [options]="temperatureBarOptions">
+                </canvas>
+              </div>
+            </mat-card-content>
+
+            <p><strong>Average precipitation graph</strong></p>
+            <!-- ✅ Bar chart of temperature by month -->
+            <mat-card-content>
+              <div style="height: 150px;">
+                <canvas
+                  baseChart
+                  [type]="'bar'"
+                  [data]="getPrecipitationChartData(a)"
+                  [options]="precipitationBarOptions">
                 </canvas>
               </div>
             </mat-card-content>
