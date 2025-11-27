@@ -446,9 +446,6 @@ public class AccommodationService {
             accomodationTypeDTO.setAvgTempByMonthC(avgTempByMonthC);
             accomodationTypeDTO.setAvgPrecipByMonthMm(avgPrecipByMonthMm);
 
-            listOfAccomodationTypeDTO.add(accomodationTypeDTO);
-
-            ////////////////////////////////
             List<SafetyOfAreaOfAccommodation> listOfSafetyOfAreaOfAccommodation = safetyOfAreaOfAccommodationRepository.getSafetyDetailsOfLocationUsingLocationSKOfAccomodation(accommodationLocationSk);
 
             Map<Integer, BigDecimal> avgCrimeRateByMonth = new HashMap<>();
@@ -476,7 +473,7 @@ public class AccommodationService {
             accomodationTypeDTO.setAvgAccidentRateByMonth(avgAccidentRateByMonth);
 
             listOfAccomodationTypeDTO.add(accomodationTypeDTO);
-            ////////////////////////////////
+
 
         }
 
