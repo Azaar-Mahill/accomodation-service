@@ -111,7 +111,7 @@
         </div>
 
         <div class="results">
-          <mat-card *ngFor="let a of tab3Results()">
+          <mat-card class="accommodation-card" *ngFor="let a of tab3Results()">
             <mat-card-title>Name of Accommodation: {{ a.accommodationName }}</mat-card-title>
             <mat-card-content>
               <p><strong>Environment:</strong> {{ a.environment }}</p>
@@ -120,55 +120,60 @@
               <p><strong>Address:</strong> {{ a.accommodationAddress }}</p>
             </mat-card-content>
 
-            <p><strong>Average temperature graph</strong></p>
-            <!-- ✅ Bar chart of temperature by month -->
-            <mat-card-content>
-              <div style="height: 150px;">
-                <canvas
-                  baseChart
-                  [type]="'bar'"
-                  [data]="getTempChartData(a)"
-                  [options]="temperatureBarOptions">
-                </canvas>
+            <!-- 🔹 One row with 2 charts horizontally -->
+            <mat-card-content class="chart-row">
+              <div class="chart-box">
+                <p><strong>Average temperature graph</strong></p>
+                <div class="chart-container">
+                  <canvas
+                    baseChart
+                    [type]="'bar'"
+                    [data]="getTempChartData(a)"
+                    [options]="temperatureBarOptions">
+                  </canvas>
+                </div>
+              </div>
+
+              <div class="chart-box">
+                <p><strong>Average precipitation graph</strong></p>
+                <div class="chart-container">
+                  <canvas
+                    baseChart
+                    [type]="'bar'"
+                    [data]="getPrecipitationChartData(a)"
+                    [options]="precipitationBarOptions">
+                  </canvas>
+                </div>
               </div>
             </mat-card-content>
 
-            <p><strong>Average precipitation graph</strong></p>
+            <mat-card-content class="chart-row">
+              <div class="chart-box">
+                <p><strong>Average crime rate graph</strong></p>
+                <div class="chart-container">
+                  <canvas
+                    baseChart
+                    [type]="'bar'"
+                    [data]="getCrimeRateChartData(a)"
+                    [options]="CrimeRateBarOptions">
+                  </canvas>
+                </div>
+              </div>
 
-            <mat-card-content>
-              <div style="height: 150px;">
-                <canvas
-                  baseChart
-                  [type]="'bar'"
-                  [data]="getPrecipitationChartData(a)"
-                  [options]="precipitationBarOptions">
-                </canvas>
+              <div class="chart-box">
+                <p><strong>Average accident rate graph</strong></p>
+                <div class="chart-container">
+                  <canvas
+                    baseChart
+                    [type]="'bar'"
+                    [data]="getAccidentRateChartData(a)"
+                    [options]="AccidentRateBarOptions">
+                  </canvas>
+                </div>
               </div>
             </mat-card-content>
 
-            <p><strong>Average crime rate graph</strong></p>
-            <mat-card-content>
-              <div style="height: 150px;">
-                <canvas
-                  baseChart
-                  [type]="'bar'"
-                  [data]="getCrimeRateChartData(a)"
-                  [options]="CrimeRateBarOptions">
-                </canvas>
-              </div>
-            </mat-card-content>
 
-            <p><strong>Average accident rate graph</strong></p>
-            <mat-card-content>
-              <div style="height: 150px;">
-                <canvas
-                  baseChart
-                  [type]="'bar'"
-                  [data]="getAccidentRateChartData(a)"
-                  [options]="AccidentRateBarOptions">
-                </canvas>
-              </div>
-            </mat-card-content>
 
             <mat-card-actions>
               <a mat-button color="accent" [routerLink]="['/book', a.id]">Click to book</a>
