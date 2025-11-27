@@ -27,4 +27,6 @@ public class AccomodationTypeDTO {
     private Map<Integer, BigDecimal> avgPrecipByMonthMm;
 
     private Map<Integer, BigDecimal> avgCrimeRateByMonth;
+
+    private Map<Integer, BigDecimal> avgAccidentRateByMonth;
 }

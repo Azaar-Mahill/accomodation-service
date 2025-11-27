@@ -452,6 +452,7 @@ public class AccommodationService {
             List<SafetyOfAreaOfAccommodation> listOfSafetyOfAreaOfAccommodation = safetyOfAreaOfAccommodationRepository.getSafetyDetailsOfLocationUsingLocationSKOfAccomodation(accommodationLocationSk);
 
             Map<Integer, BigDecimal> avgCrimeRateByMonth = new HashMap<>();
+            Map<Integer, BigDecimal> avgAccidentRateByMonth = new HashMap<>();
 
             for (SafetyOfAreaOfAccommodation safetyOfAreaOfAccommodation : listOfSafetyOfAreaOfAccommodation) {
 
@@ -468,9 +469,11 @@ public class AccommodationService {
                 //      "2024-10" -> "10" -> 10
 
                 avgCrimeRateByMonth.put(month, safetyOfAreaOfAccommodation.getCrimeRate());
+                avgAccidentRateByMonth.put(month, safetyOfAreaOfAccommodation.getAccidentRate());
 
             }
             accomodationTypeDTO.setAvgCrimeRateByMonth(avgCrimeRateByMonth);
+            accomodationTypeDTO.setAvgAccidentRateByMonth(avgAccidentRateByMonth);
 
             listOfAccomodationTypeDTO.add(accomodationTypeDTO);
             ////////////////////////////////

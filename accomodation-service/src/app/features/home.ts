@@ -83,7 +83,7 @@ export class HomeComponent {
       y: {
         beginAtZero: true,
         max: 200,
-        title: { display: true, text: '°C' }
+        title: { display: true, text: 'mm' }
       }
     }
   };
@@ -98,7 +98,22 @@ export class HomeComponent {
       y: {
         beginAtZero: true,
         max: 1,
-        title: { display: true, text: '°C' }
+        title: { display: true }
+      }
+    }
+  };
+
+  AccidentRateBarOptions: ChartConfiguration['options'] = {
+    responsive: true,
+    plugins: {
+      legend: { display: false }
+    },
+    scales: {
+      x: {},
+      y: {
+        beginAtZero: true,
+        max: 1,
+        title: { display: true }
       }
     }
   };
@@ -148,6 +163,22 @@ export class HomeComponent {
         {
           data: temps,
           label: 'Avg Crime Rate Per Month'
+        }
+      ]
+    };
+  }
+
+  getAccidentRateChartData(a: any): ChartConfiguration['data'] {
+    const temps: number[] = this.monthLabels.map((_, idx3) => {
+      return a?.avgAccidentRateByMonth?.[idx3 + 1] ?? 0;
+    });
+
+    return {
+      labels: this.monthLabels,
+      datasets: [
+        {
+          data: temps,
+          label: 'Avg Accident Rate Per Month'
         }
       ]
     };

@@ -158,6 +158,18 @@
               </div>
             </mat-card-content>
 
+            <p><strong>Average accident rate graph</strong></p>
+            <mat-card-content>
+              <div style="height: 150px;">
+                <canvas
+                  baseChart
+                  [type]="'bar'"
+                  [data]="getAccidentRateChartData(a)"
+                  [options]="AccidentRateBarOptions">
+                </canvas>
+              </div>
+            </mat-card-content>
+
             <mat-card-actions>
               <a mat-button color="accent" [routerLink]="['/book', a.id]">Click to book</a>
             </mat-card-actions>

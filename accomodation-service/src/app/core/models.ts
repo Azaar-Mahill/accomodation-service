@@ -38,4 +38,5 @@ export interface Accommodation3 {
   bookingUrl?: string;
   weatherStatus?: string;
   avgCrimeRateByMonth: Record<number, number>; 
+  avgAccidentRateByMonth: Record<number, number>; 
 }
