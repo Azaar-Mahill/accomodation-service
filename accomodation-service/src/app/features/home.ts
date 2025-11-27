@@ -67,6 +67,7 @@ export class HomeComponent {
       x: {},
       y: {
         beginAtZero: true,
+        max: 60,
         title: { display: true, text: '°C' }
       }
     }
@@ -176,25 +177,6 @@ export class HomeComponent {
 
     // Search for Tab 3 (Type of Accommodation)
   searchTab3(): void {
-    /*const accomodationType = this.tab3Form.value.accomodationType ?? null;
-
-    if (accomodationType == null) {
-      this.dialog.open(InfoDialogComponent, {
-        data: {
-          title: 'Selections required',
-          message: 'Please select a Type of Accommodation before searching.'
-        }
-      });
-      return;
-    }
-
-    let list = [...this.allAccommodations];
-
-    if (accomodationType !== 'Any') {
-      list = list.filter(a => a.accomodationType === accomodationType);
-    }
-
-    this.tab3Results.set(list);*/
 
     const { accomodationType } = this.tab3Form.value;
 
