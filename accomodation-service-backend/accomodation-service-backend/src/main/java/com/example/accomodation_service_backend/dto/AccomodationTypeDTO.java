@@ -13,6 +13,9 @@ import java.util.Map;
 @AllArgsConstructor
 public class AccomodationTypeDTO {
 
+    @Column(name = "id")
+    private String id;
+
     @Column(name = "AccommodationName")
     private String accommodationName;
 

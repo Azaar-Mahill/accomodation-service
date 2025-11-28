@@ -12,9 +12,11 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 public class AccomodationWeatherDTO {
 
+    @Column(name = "id")
+    private String id;
+
     @Column(name = "AccommodationName")
     private String accommodationName;
-
 
     @Column(name = "AccommodationAddress")
     private String accommodationAddress;

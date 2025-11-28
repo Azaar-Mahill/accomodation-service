@@ -357,6 +357,7 @@ public class AccommodationService {
 
             String accommodationLocationSk = filteredWeatherDetailsBasedOnWeather.getAccommodationLocationSk();
             List<Accommodation> filteredAccommodationsUsingLocationSk = accommodationRepository.getAccomodationsFromAccommodationLocationSk(accommodationLocationSk);
+            accomodationWeatherDTO.setId(filteredAccommodationsUsingLocationSk.get(0).getAccommodationSk());
             accomodationWeatherDTO.setAccommodationName(filteredAccommodationsUsingLocationSk.get(0).getAccommodationName());
             String convertedMonthSK2 = convertToMonthSK(month);
 
