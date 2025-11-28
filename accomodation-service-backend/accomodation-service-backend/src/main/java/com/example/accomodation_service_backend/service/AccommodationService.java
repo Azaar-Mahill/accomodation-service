@@ -415,6 +415,7 @@ public class AccommodationService {
         
         for(Accommodation accommodation: listOfAccommodations){
             AccomodationTypeDTO accomodationTypeDTO = new AccomodationTypeDTO();
+            accomodationTypeDTO.setId(accommodation.getAccommodationSk());
             accomodationTypeDTO.setAccommodationName(accommodation.getAccommodationName());
             String accommodationLocationSk = accommodation.getAccommodationLocationSk();
             String Environment = accommodationLocationRepository.getEnvironment(accommodationLocationSk);
