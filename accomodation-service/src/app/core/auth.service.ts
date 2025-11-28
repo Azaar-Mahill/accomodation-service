@@ -46,8 +46,18 @@ export class AuthService {
   isCustomer() { return this.role() === 'CUSTOMER'; }
   isAdmin() { return this.role() === 'ADMIN'; }
 
-  logout() {
-    this._user.set(null);
-    localStorage.removeItem('jwt');  
+  logout(): void {
+  const token = this.getToken();
+  if (token) {
+    this.http.post(`${this.apiUrl}/logout`, {}, {
+      headers: { Authorization: `Bearer ${token}` }
+    }).subscribe({
+      next: () => {},
+      error: () => {}
+    });
   }
+  this._user.set(null);
+  localStorage.removeItem('jwt');
+}
+
 }

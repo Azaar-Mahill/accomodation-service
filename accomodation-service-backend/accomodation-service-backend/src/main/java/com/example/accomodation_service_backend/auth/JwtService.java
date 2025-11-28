@@ -69,4 +69,11 @@ public class JwtService {
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
+    public Date getExpirationDate() {
+        Instant now = Instant.now();
+        Instant expiry = now.plus(EXPIRATION_HOURS, ChronoUnit.HOURS);
+        return Date.from(expiry);
+    }
+
+
 }
