@@ -1,3 +1,4 @@
+// src/app/core/auth.service.ts
 import { Injectable, computed, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
@@ -12,7 +13,7 @@ export interface User {
 export interface LoginResponse {
   email: string;
   role: UserRole;
-  token: string;  
+  token: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -23,14 +24,24 @@ export class AuthService {
   user = computed(() => this._user());
   role = computed<UserRole | null>(() => this._user()?.role ?? null);
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+    // 🔹 try to restore user when service is constructed
+    this.restoreFromStoredToken();
+  }
+
+  /** Helper: are we in the browser (not server)? */
+  private isBrowser(): boolean {
+    return typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
+  }
 
   login(email: string, password: string): Observable<LoginResponse> {
     return this.http.post<LoginResponse>(`${this.apiUrl}/login`, { email, password })
       .pipe(
         tap(res => {
           this._user.set({ email: res.email, role: res.role });
-          localStorage.setItem('jwt', res.token); 
+          if (this.isBrowser()) {
+            localStorage.setItem('jwt', res.token);
+          }
         })
       );
   }
@@ -40,24 +51,51 @@ export class AuthService {
   }
 
   getToken(): string | null {
+    if (!this.isBrowser()) return null;
     return localStorage.getItem('jwt');
+  }
+
+  // ✅ restore user from stored JWT on page load/refresh (browser only)
+  restoreFromStoredToken(): void {
+    if (!this.isBrowser()) {
+      return; // in SSR there is no localStorage
+    }
+
+    const token = this.getToken();
+    if (!token) return;
+
+    try {
+      const parts = token.split('.');
+      if (parts.length !== 3) {
+        this.logout();
+        return;
+      }
+
+      const payload = JSON.parse(atob(parts[1])); // decode middle part
+      const email = payload.sub as string;
+      const role = payload.role as UserRole;
+      const expMs = (payload.exp as number) * 1000; // seconds → ms
+
+      if (Date.now() > expMs) {
+        // token expired
+        this.logout();
+        return;
+      }
+
+      this._user.set({ email, role });
+    } catch (e) {
+      console.error('Failed to restore from token', e);
+      this.logout();
+    }
+  }
+
+  logout() {
+    this._user.set(null);
+    if (this.isBrowser()) {
+      localStorage.removeItem('jwt');
+    }
   }
 
   isCustomer() { return this.role() === 'CUSTOMER'; }
   isAdmin() { return this.role() === 'ADMIN'; }
-
-  logout(): void {
-  const token = this.getToken();
-  if (token) {
-    this.http.post(`${this.apiUrl}/logout`, {}, {
-      headers: { Authorization: `Bearer ${token}` }
-    }).subscribe({
-      next: () => {},
-      error: () => {}
-    });
-  }
-  this._user.set(null);
-  localStorage.removeItem('jwt');
-}
-
 }

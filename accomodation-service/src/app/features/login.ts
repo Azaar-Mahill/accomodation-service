@@ -93,6 +93,16 @@ export class LoginComponent {
     role: ['CUSTOMER' as UserRole, [Validators.required]]  // default role
   });
 
+  ngOnInit(): void {
+    // if token already restored, send to correct page
+    const role = this.auth.role();
+    if (role === 'CUSTOMER') {
+      this.router.navigateByUrl('/');
+    } else if (role === 'ADMIN') {
+      this.router.navigateByUrl('/admin');
+    }
+  }
+
   onLogin() {
     this.error.set(null);
     this.success.set(null);
