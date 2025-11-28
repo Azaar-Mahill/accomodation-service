@@ -63,3 +63,13 @@
   }
 }
 
+.top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 8px 16px;
+}
+
+.top-bar .spacer {
+  flex: 1;
+}

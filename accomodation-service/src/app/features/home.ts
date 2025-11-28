@@ -16,6 +16,8 @@ import { BaseChartDirective } from 'ng2-charts';          // ✅ instead of NgCh
 import { ChartConfiguration } from 'chart.js';
 import { ACCOMMODATIONS } from '../core/mock-accommodations';
 import { Accommodation } from '../core/models';
+import { Router } from '@angular/router';
+import { AuthService } from '../core/auth.service';
 
 
 @Component({
@@ -185,7 +187,12 @@ export class HomeComponent {
   }
 
 
-  constructor(private fb: FormBuilder, private svc: AccommodationService) {
+  constructor(
+    private fb: FormBuilder, 
+    private svc: AccommodationService,
+    private auth: AuthService, 
+    private router: Router  
+  ) {
     this.tab1Form = this.fb.group({
       month: [null as number | null],
       environmentType: [null as EnvironmentType | null],
@@ -294,6 +301,9 @@ export class HomeComponent {
     }
   }
 
-
+  logout(): void {
+    this.auth.logout();               // clear user info
+    this.router.navigate(['/login']); // go back to login page
+  }
 
 }
