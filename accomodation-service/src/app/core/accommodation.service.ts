@@ -71,7 +71,7 @@ export class AccommodationService {
 
   accomodationTypeInformation(params: {
     accomodationType?: AccommodationType | null | null;
-  }): Observable<Accommodation4[]> {
+  }): Observable<Accommodation3[]> {
     let httpParams = new HttpParams();
     if (params.accomodationType) httpParams = httpParams.set('accomodationType', params.accomodationType);
 

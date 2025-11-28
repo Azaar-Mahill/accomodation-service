@@ -43,11 +43,11 @@ export interface Accommodation3 {
 
 export interface Accommodation4 {
   id: string;
-  name: string;
-  address: string;
+  accommodationName: string;
+  accommodationAddress: string;
   district: string;
-  environmentType: EnvironmentType;
-  accomodationType: AccommodationType;
+  environment: EnvironmentType;
+  accommodationType: AccommodationType;
   avgTempByMonthC: Record<number, number>;       // 1..12
   avgPrecipByMonthMm: Record<number, number>;    // 1..12
   bookingUrl?: string;

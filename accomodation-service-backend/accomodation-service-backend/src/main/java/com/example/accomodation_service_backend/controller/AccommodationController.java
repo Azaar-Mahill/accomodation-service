@@ -1,5 +1,6 @@
 package com.example.accomodation_service_backend.controller;
 
+import com.example.accomodation_service_backend.dto.AccomodationByIdDTO;
 import com.example.accomodation_service_backend.dto.AccomodationDTO;
 import com.example.accomodation_service_backend.dto.AccomodationTypeDTO;
 import com.example.accomodation_service_backend.dto.AccomodationWeatherDTO;
@@ -45,10 +46,10 @@ public class AccommodationController {
     }
 
     @GetMapping("/findAccomodation")
-    public List<AccomodationTypeDTO> findAccomodation(
+    public AccomodationByIdDTO findAccomodation(
             @RequestParam(required = false) String accomodationSK
     ) {
-        return null;
+        return svc.findAccomodationById(accomodationSK);
     }
 }
 

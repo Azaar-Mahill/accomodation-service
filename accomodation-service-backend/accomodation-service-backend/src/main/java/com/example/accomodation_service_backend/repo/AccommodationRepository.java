@@ -31,6 +31,13 @@ public interface AccommodationRepository extends JpaRepository<Accommodation, St
            """)
     List<Accommodation> getAllAccomodationsFromTypeSK(@Param("accommodationTypeSk") String accommodationTypeSk);
 
+    @Query("""
+           SELECT a
+           FROM Accommodation a
+           WHERE LOWER(a.accommodationSk) = LOWER(:accommodationSk)
+           """)
+    Accommodation findAccomodationById(@Param("accommodationSk") String accommodationSk);
+
 
 }
 

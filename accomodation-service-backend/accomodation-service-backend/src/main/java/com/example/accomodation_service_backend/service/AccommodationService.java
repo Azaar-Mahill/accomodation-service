@@ -1,5 +1,6 @@
 package com.example.accomodation_service_backend.service;
 
+import com.example.accomodation_service_backend.dto.AccomodationByIdDTO;
 import com.example.accomodation_service_backend.dto.AccomodationDTO;
 import com.example.accomodation_service_backend.dto.AccomodationTypeDTO;
 import com.example.accomodation_service_backend.dto.AccomodationWeatherDTO;
@@ -482,6 +483,40 @@ public class AccommodationService {
         }
 
         return listOfAccomodationTypeDTO;
+
+    }
+
+    public AccomodationByIdDTO findAccomodationById(String accomodationSK) {
+
+        AccomodationByIdDTO accomodationByIdDTO = new AccomodationByIdDTO();
+
+        Accommodation accomodationById = accommodationRepository.findAccomodationById(accomodationSK);
+
+        if(accomodationById == null){
+            return null;
+        }
+
+        accomodationByIdDTO.setId(accomodationById.getAccommodationSk());
+        accomodationByIdDTO.setAccommodationName(accomodationById.getAccommodationName());
+
+        String accommodationLocationSk = accomodationById.getAccommodationLocationSk();
+        String province = accommodationLocationRepository.getProvince(accommodationLocationSk);
+        String district = accommodationLocationRepository.getDistrict(accommodationLocationSk);
+        String city = accommodationLocationRepository.getCity(accommodationLocationSk);
+        String address = String.format("%s, %s, %s province", city, district, province);
+
+        accomodationByIdDTO.setAccommodationAddress(address);
+
+        String accommodationTypeSk = accomodationById.getAccommodationTypeSk();
+        String accommodationType = accommodationTypeRepository.findTypeBySK(accommodationTypeSk);
+
+        accomodationByIdDTO.setAccommodationType(accommodationType);
+
+        String environment = accommodationLocationRepository.getEnvironment(accommodationLocationSk);
+
+        accomodationByIdDTO.setEnvironment(environment);
+
+        return accomodationByIdDTO;
 
     }
 }
