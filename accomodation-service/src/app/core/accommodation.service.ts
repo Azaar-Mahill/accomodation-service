@@ -1,7 +1,7 @@
 import { Injectable, signal } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { ACCOMMODATIONS } from './mock-accommodations';
-import { Accommodation, Accommodation2, Accommodation3, AccommodationType, EnvironmentType } from './models';
+import { Accommodation, Accommodation2, Accommodation3, Accommodation4, AccommodationType, EnvironmentType } from './models';
 import { environment } from '../../environments/environment';
 import { Observable } from 'rxjs';
 
@@ -55,13 +55,23 @@ export class AccommodationService {
     );
   }
 
-  findById(id: string) {
+  /*findById(id: string) {
     return this.all().find(a => a.id === id) || null;
+  }*/
+
+  findById(id: string) : Observable<Accommodation4> {
+    let httpParams = new HttpParams();
+    if (id) httpParams = httpParams.set('accomodationSK', id);
+
+    return this.http.get<Accommodation4>(
+      `${this.baseUrl}/api/accommodations/findAccomodation`,
+      { params: httpParams }
+    );
   }
 
   accomodationTypeInformation(params: {
     accomodationType?: AccommodationType | null | null;
-  }): Observable<Accommodation3[]> {
+  }): Observable<Accommodation4[]> {
     let httpParams = new HttpParams();
     if (params.accomodationType) httpParams = httpParams.set('accomodationType', params.accomodationType);
 

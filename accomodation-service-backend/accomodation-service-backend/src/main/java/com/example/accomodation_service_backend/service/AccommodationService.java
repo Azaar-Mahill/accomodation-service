@@ -197,8 +197,12 @@ public class AccommodationService {
             String city = accommodationLocationRepository.getCity(accommodationsFoundFromFilteringWeather.getAccommodationLocationSk());
             String address = String.format("%s, %s, %s province", city, district, province);
 
+            AccomodationDTO accomodationDTO = new AccomodationDTO();
+            accomodationDTO.setId(accommodationsFoundFromFilteringWeather.getAccommodationSk());
+            accomodationDTO.setAccommodationName(accommodationsFoundFromFilteringWeather.getAccommodationName());
+            accomodationDTO.setAccommodationAddress(address);
 
-            listOfFilteredAccommodations.add(new AccomodationDTO(accommodationsFoundFromFilteringWeather.getAccommodationName(),address));
+            listOfFilteredAccommodations.add(accomodationDTO);
         }
 
         return listOfFilteredAccommodations;

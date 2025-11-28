@@ -43,5 +43,12 @@ public class AccommodationController {
     ) {
         return svc.search3(accomodationType);
     }
+
+    @GetMapping("/findAccomodation")
+    public List<AccomodationTypeDTO> findAccomodation(
+            @RequestParam(required = false) String accomodationSK
+    ) {
+        return null;
+    }
 }
 

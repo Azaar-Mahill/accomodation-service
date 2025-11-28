@@ -12,6 +12,9 @@ import lombok.NoArgsConstructor;
 public class AccomodationDTO {
 
 
+    @Column(name = "id")
+    private String id;
+
     @Column(name = "AccommodationName")
     private String accommodationName;
 
