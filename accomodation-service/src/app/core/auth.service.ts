@@ -1,45 +1,44 @@
-import { Injectable, signal, computed } from '@angular/core';
+import { Injectable, computed, signal } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable, tap } from 'rxjs';
 
-export type UserRole = 'customer' | 'admin';
+export type UserRole = 'CUSTOMER' | 'ADMIN';
 
 export interface User {
   email: string;
   role: UserRole;
 }
 
+export interface LoginResponse {
+  email: string;
+  role: UserRole;
+}
+
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private _user = signal<User | null>(null);
+  private apiUrl = 'http://localhost:8080/api/auth';
 
-  // expose read-only user + role
+  private _user = signal<User | null>(null);
   user = computed(() => this._user());
   role = computed<UserRole | null>(() => this._user()?.role ?? null);
 
-  // very simple demo login – replace with real API later
-  login(email: string, password: string): UserRole | null {
-    // example hard-coded users
-    if (email === 'customer@example.com' && password === '123456') {
-      this._user.set({ email, role: 'customer' });
-      return 'customer';
-    }
+  constructor(private http: HttpClient) {}
 
-    if (email === 'admin@example.com' && password === '123456') {
-      this._user.set({ email, role: 'admin' });
-      return 'admin';
-    }
-
-    return null;
+  login(email: string, password: string): Observable<LoginResponse> {
+    return this.http.post<LoginResponse>(`${this.apiUrl}/login`, { email, password })
+      .pipe(
+        tap(res => this._user.set({ email: res.email, role: res.role }))
+      );
   }
+
+  signup(email: string, password: string, role: UserRole): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/signup`, { email, password, role });
+  }
+
+  isCustomer() { return this.role() === 'CUSTOMER'; }
+  isAdmin() { return this.role() === 'ADMIN'; }
 
   logout() {
     this._user.set(null);
-  }
-
-  isCustomer() {
-    return this.role() === 'customer';
-  }
-
-  isAdmin() {
-    return this.role() === 'admin';
   }
 }

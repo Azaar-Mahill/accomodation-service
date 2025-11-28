@@ -5,7 +5,8 @@ import { Router } from '@angular/router';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
-import { AuthService } from '../core/auth.service';
+import { MatSelectModule } from '@angular/material/select';
+import { AuthService, UserRole } from '../core/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -15,11 +16,12 @@ import { AuthService } from '../core/auth.service';
     ReactiveFormsModule,
     MatFormFieldModule,
     MatInputModule,
-    MatButtonModule
+    MatButtonModule,
+    MatSelectModule
   ],
   template: `
     <div class="login-container">
-      <form [formGroup]="form" (ngSubmit)="onSubmit()">
+      <form [formGroup]="form" (ngSubmit)="onLogin()">
         <h2>Sign in</h2>
 
         <mat-form-field appearance="outline">
@@ -32,18 +34,35 @@ import { AuthService } from '../core/auth.service';
           <input matInput type="password" formControlName="password">
         </mat-form-field>
 
-        <!-- ✅ Sign in button is for customers -->
-        <button mat-raised-button color="primary" type="submit">
-          Customer sign in
-        </button>
+        <!-- Role is used when signing up -->
+        <mat-form-field appearance="outline">
+          <mat-label>Role for sign up</mat-label>
+          <mat-select formControlName="role">
+            <mat-option value="CUSTOMER">Customer</mat-option>
+            <mat-option value="ADMIN">Admin</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <div class="buttons">
+          <!-- ✅ Customer sign in button -->
+          <button mat-raised-button color="primary" type="submit">
+            Customer sign in
+          </button>
+
+          <!-- ✅ Sign up button: store new user in DB -->
+          <button mat-stroked-button color="accent" type="button" (click)="onSignup()">
+            Sign up
+          </button>
+        </div>
 
         <p class="error" *ngIf="error()">{{ error() }}</p>
+        <p class="success" *ngIf="success()">{{ success() }}</p>
       </form>
     </div>
   `,
   styles: [`
     .login-container {
-      max-width: 400px;
+      max-width: 420px;
       margin: 40px auto;
     }
     form {
@@ -51,10 +70,13 @@ import { AuthService } from '../core/auth.service';
       flex-direction: column;
       gap: 16px;
     }
-    .error {
-      color: red;
-      font-size: 13px;
+    .buttons {
+      display: flex;
+      gap: 12px;
+      justify-content: space-between;
     }
+    .error { color: red; font-size: 13px; }
+    .success { color: green; font-size: 13px; }
   `]
 })
 export class LoginComponent {
@@ -63,31 +85,59 @@ export class LoginComponent {
   private router = inject(Router);
 
   error = signal<string | null>(null);
+  success = signal<string | null>(null);
 
   form = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.required]]
+    password: ['', [Validators.required]],
+    role: ['CUSTOMER' as UserRole, [Validators.required]]  // default role
   });
 
-  onSubmit() {
+  onLogin() {
     this.error.set(null);
+    this.success.set(null);
 
     if (this.form.invalid) {
-      this.error.set('Please fill email and password');
+      this.error.set('Please fill email, password and role');
       return;
     }
 
     const { email, password } = this.form.value;
-    const role = this.auth.login(email!, password!);
 
-    if (role === 'customer') {
-      // ✅ customers go to the page in your screenshot (Home)
-      this.router.navigateByUrl('/');
-    } else if (role === 'admin') {
-      // ✅ admins go to separate page
-      this.router.navigateByUrl('/admin');
-    } else {
-      this.error.set('Invalid credentials');
+    this.auth.login(email!, password!)
+      .subscribe({
+        next: res => {
+          if (res.role === 'CUSTOMER') {
+            this.router.navigateByUrl('/');
+          } else if (res.role === 'ADMIN') {
+            this.router.navigateByUrl('/admin');
+          }
+        },
+        error: err => {
+          this.error.set(err.error?.message || 'Login failed');
+        }
+      });
+  }
+
+  onSignup() {
+    this.error.set(null);
+    this.success.set(null);
+
+    if (this.form.invalid) {
+      this.error.set('Please fill email, password and role');
+      return;
     }
+
+    const { email, password, role } = this.form.value;
+
+    this.auth.signup(email!, password!, role as UserRole)
+      .subscribe({
+        next: () => {
+          this.success.set('User created successfully. Now you can sign in.');
+        },
+        error: err => {
+          this.error.set(err.error?.message || 'Sign up failed');
+        }
+      });
   }
 }
