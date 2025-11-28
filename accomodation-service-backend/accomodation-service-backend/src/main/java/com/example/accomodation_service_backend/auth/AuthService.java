@@ -1,8 +1,5 @@
 package com.example.accomodation_service_backend.auth;
 
-import com.example.accomodation_service_backend.auth.LoginRequest;
-import com.example.accomodation_service_backend.auth.LoginResponse;
-import com.example.accomodation_service_backend.auth.SignupRequest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -11,11 +8,14 @@ public class AuthService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;    // 👈 inject
 
     public AuthService(UserRepository userRepository,
-                       PasswordEncoder passwordEncoder) {
+                       PasswordEncoder passwordEncoder,
+                       JwtService jwtService) {         // 👈 ctor
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.jwtService = jwtService;
     }
 
     public void signup(SignupRequest request) {
@@ -39,7 +39,8 @@ public class AuthService {
             throw new IllegalArgumentException("Invalid email or password");
         }
 
-        return new LoginResponse(user.getEmail(), user.getRole());
+        String token = jwtService.generateToken(user.getEmail(), user.getRole().name());
+
+        return new LoginResponse(user.getEmail(), user.getRole(), token);
     }
 }
-

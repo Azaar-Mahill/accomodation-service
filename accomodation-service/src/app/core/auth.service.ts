@@ -12,6 +12,7 @@ export interface User {
 export interface LoginResponse {
   email: string;
   role: UserRole;
+  token: string;  
 }
 
 @Injectable({ providedIn: 'root' })
@@ -27,7 +28,10 @@ export class AuthService {
   login(email: string, password: string): Observable<LoginResponse> {
     return this.http.post<LoginResponse>(`${this.apiUrl}/login`, { email, password })
       .pipe(
-        tap(res => this._user.set({ email: res.email, role: res.role }))
+        tap(res => {
+          this._user.set({ email: res.email, role: res.role });
+          localStorage.setItem('jwt', res.token); 
+        })
       );
   }
 
@@ -35,10 +39,15 @@ export class AuthService {
     return this.http.post<void>(`${this.apiUrl}/signup`, { email, password, role });
   }
 
+  getToken(): string | null {
+    return localStorage.getItem('jwt');
+  }
+
   isCustomer() { return this.role() === 'CUSTOMER'; }
   isAdmin() { return this.role() === 'ADMIN'; }
 
   logout() {
     this._user.set(null);
+    localStorage.removeItem('jwt');  
   }
 }
