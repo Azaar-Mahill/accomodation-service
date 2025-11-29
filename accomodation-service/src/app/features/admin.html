@@ -9,92 +9,92 @@
 <mat-tab-group>
 
 <!-- TAB4 -->
-<mat-tab label="KPIs">
-    <form class="panel" [formGroup]="tab4Form">
-      <div class="content-layout">
-        <div class="filters">
+  <mat-tab label="KPIs">
+      <form class="panel" [formGroup]="tab4Form">
+        <div class="content-layout">
+          <div class="filters">
 
-            <mat-form-field appearance="outline">
-            <mat-label>Name of Province</mat-label>
-            <mat-select formControlName="province">
-                <mat-option *ngFor="let p of provinces" [value]="p">
-                {{ p }}
-                </mat-option>
-            </mat-select>
-            </mat-form-field>
+              <mat-form-field appearance="outline">
+              <mat-label>Name of Province</mat-label>
+              <mat-select formControlName="province">
+                  <mat-option *ngFor="let p of provinces" [value]="p">
+                  {{ p }}
+                  </mat-option>
+              </mat-select>
+              </mat-form-field>
 
-            <mat-checkbox formControlName="useDistrict" style="margin-left: 16px;">
-            Filter by district
-            </mat-checkbox>
+              <mat-checkbox formControlName="useDistrict" style="margin-left: 16px;">
+              Filter by district
+              </mat-checkbox>
 
-            <mat-form-field
-            appearance="outline"
-            *ngIf="tab4Form.get('useDistrict')?.value"
-            >
-            <mat-label>Name of District</mat-label>
-            <mat-select formControlName="district">
-                <mat-option
-                *ngFor="let d of getDistrictsForSelectedProvince()"
-                [value]="d"
-                >
-                {{ d }}
-                </mat-option>
-            </mat-select>
-            </mat-form-field>
+              <mat-form-field
+              appearance="outline"
+              *ngIf="tab4Form.get('useDistrict')?.value"
+              >
+              <mat-label>Name of District</mat-label>
+              <mat-select formControlName="district">
+                  <mat-option
+                  *ngFor="let d of getDistrictsForSelectedProvince()"
+                  [value]="d"
+                  >
+                  {{ d }}
+                  </mat-option>
+              </mat-select>
+              </mat-form-field>
 
-            <button
-            mat-raised-button
-            color="primary"
-            type="button"
-            (click)="searchTab4()"
-            >
-            Search
-            </button>
-        </div>
-        <div class="results4">
-          <mat-card class="accommodation-card" *ngFor="let a of tab4Results()">
-            <mat-card-title>Name of Accommodation: {{ a.accommodationName }}</mat-card-title>
-            <mat-card-content>
-              <p><strong>Environment:</strong> {{ a.environment }}</p>
-            </mat-card-content>
-            <mat-card-content>
-              <p><strong>Address:</strong> {{ a.accommodationAddress }}</p>
-            </mat-card-content>
+              <button
+              mat-raised-button
+              color="primary"
+              type="button"
+              (click)="searchTab4()"
+              >
+              Search
+              </button>
+          </div>
+          <div class="results4">
+            <mat-card class="accommodation-card" *ngFor="let a of tab4Results()">
+              <mat-card-title>Name of Accommodation: {{ a.accommodationName }}</mat-card-title>
+              <mat-card-content>
+                <p><strong>Environment:</strong> {{ a.environment }}</p>
+              </mat-card-content>
+              <mat-card-content>
+                <p><strong>Address:</strong> {{ a.accommodationAddress }}</p>
+              </mat-card-content>
 
-            <!-- 🔹 One row with 2 charts horizontally -->
-            <mat-card-content class="chart-row">
-              <div class="chart-box">
-                <p><strong>Booking graph</strong></p>
-                <div class="chart-container">
-                  <canvas
-                    baseChart
-                    [type]="'bar'"
-                    [data]="getBookingsChartData(a)"
-                    [options]="bookingsBarOptions">
-                  </canvas>
+              <!-- 🔹 One row with 2 charts horizontally -->
+              <mat-card-content class="chart-row">
+                <div class="chart-box">
+                  <p><strong>Booking graph</strong></p>
+                  <div class="chart-container">
+                    <canvas
+                      baseChart
+                      [type]="'bar'"
+                      [data]="getBookingsChartData(a)"
+                      [options]="bookingsBarOptions">
+                    </canvas>
+                  </div>
                 </div>
-              </div>
-              <div class="chart-box">
-                <p><strong>Booking graph</strong></p>
-                <div class="chart-container">
-                  <canvas
-                    baseChart
-                    [type]="'bar'"
-                    [data]="getBookingsChartData(a)"
-                    [options]="bookingsBarOptions">
-                  </canvas>
+                <div class="chart-box">
+                  <p><strong>Revenue graph</strong></p>
+                  <div class="chart-container">
+                    <canvas
+                      baseChart
+                      [type]="'bar'"
+                      [data]="getRevenuesChartData(a)"
+                      [options]="revenuesBarOptions">
+                    </canvas>
+                  </div>
                 </div>
-              </div>
-            </mat-card-content>
+              </mat-card-content>
 
-            <mat-card-actions>
-              <a mat-button color="accent" [routerLink]="['/book', a.id]">Click to book</a>
-            </mat-card-actions>
-          </mat-card>
+              <mat-card-actions>
+                <a mat-button color="accent" [routerLink]="['/book', a.id]">Click to book</a>
+              </mat-card-actions>
+            </mat-card>
+          </div>
         </div>
-      </div>
-    </form>
-</mat-tab>
+      </form>
+  </mat-tab>
 
 
 
