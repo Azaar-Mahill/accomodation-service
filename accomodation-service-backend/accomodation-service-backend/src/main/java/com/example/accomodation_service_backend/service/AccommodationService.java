@@ -576,7 +576,7 @@ public class AccommodationService {
             Map<Integer, BigDecimal> revenuePerAvailableRoom = new HashMap<>();
             Map<Integer, BigDecimal> averageLengthOfStay = new HashMap<>();
 
-            for (int month = 1; month <= 12; month++) {
+            for (int month = 1; month <= currentMonthNumber; month++) {
 
                 int totalMonthBookings = 0;
                 BigDecimal totalMonthRevenue = BigDecimal.ZERO;
