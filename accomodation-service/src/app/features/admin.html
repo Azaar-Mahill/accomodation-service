@@ -87,9 +87,20 @@
                 </div>
               </mat-card-content>
 
-              <mat-card-actions>
-                <a mat-button color="accent" [routerLink]="['/book', a.id]">Click to book</a>
-              </mat-card-actions>
+              <mat-card-content class="chart-row">
+                <div class="chart-box">
+                  <p><strong>Average Daily Rate graph</strong></p>
+                  <div class="chart-container">
+                    <canvas
+                      baseChart
+                      [type]="'bar'"
+                      [data]="getAverageDailyRateChartData(a)"
+                      [options]="averageDailyRateBarOptions">
+                    </canvas>
+                  </div>
+                </div>
+                
+              </mat-card-content>
             </mat-card>
           </div>
         </div>

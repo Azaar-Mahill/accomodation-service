@@ -6,6 +6,7 @@ import com.example.accomodation_service_backend.repo.*;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -570,11 +571,13 @@ public class AccommodationService {
 
             Map<Integer, Integer> bookingsByMonth = new HashMap<>();
             Map<Integer, BigDecimal> revenueByMonth = new HashMap<>();
+            Map<Integer, BigDecimal> averageDailyRate = new HashMap<>();
 
             for (int month = 1; month <= 12; month++) {
 
                 int totalMonthBookings = 0;
                 BigDecimal totalMonthRevenue = BigDecimal.ZERO;
+                BigDecimal averageDailyRatePerMonth = BigDecimal.ZERO;
 
                 for (BookAccomodation booking : listOfBookings) {
 
@@ -593,13 +596,25 @@ public class AccommodationService {
                     }
                 }
 
+                if (totalMonthBookings > 0) {
+                    averageDailyRatePerMonth = totalMonthRevenue.divide(
+                            BigDecimal.valueOf(totalMonthBookings),
+                            2,                              // scale (2 decimal places)
+                            RoundingMode.HALF_UP            // rounding mode
+                    );
+                } else {
+                    averageDailyRatePerMonth = BigDecimal.ZERO;
+                }
+
                 bookingsByMonth.put(month, totalMonthBookings);
                 revenueByMonth.put(month, totalMonthRevenue);   // <-- MUST be added
+                averageDailyRate.put(month, averageDailyRatePerMonth);
             }
 
 
             accomodationKPIDTO.setBookingsByMonth(bookingsByMonth);
             accomodationKPIDTO.setRevenueByMonth(revenueByMonth);
+            accomodationKPIDTO.setAverageDailyRate(averageDailyRate);
 
             listOfAccomodationKPIDTO.add(accomodationKPIDTO);
 
