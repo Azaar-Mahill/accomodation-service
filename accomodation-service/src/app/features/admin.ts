@@ -1,45 +1,316 @@
-import { Component, inject } from '@angular/core';
+import { Component, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormBuilder, ReactiveFormsModule, FormGroup } from '@angular/forms';
+import { Router, RouterModule } from '@angular/router';
+
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
-import { Router } from '@angular/router';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatCardModule } from '@angular/material/card';
+
+import { BaseChartDirective } from 'ng2-charts';
+import { ChartConfiguration } from 'chart.js';
+
+import { AccommodationService } from '../core/accommodation.service';
+import { AccommodationType, EnvironmentType } from '../core/models';
+import { ACCOMMODATIONS } from '../core/mock-accommodations';
+import { Accommodation } from '../core/models';
+import { InfoDialogComponent } from './info-dialog.component';
 import { AuthService } from '../core/auth.service';
 
 @Component({
   selector: 'app-admin',
   standalone: true,
-  imports: [CommonModule, MatButtonModule],
-  template: `
-    <div class="top-bar">
-      <span>Welcome to Tourism Accommodation Recommender</span>
-      <span class="spacer"></span>
-      <button mat-stroked-button color="warn" (click)="logout()">
-        Logout
-      </button>
-    </div>
-
-    <div style="padding: 16px">
-      <h2>Admin page</h2>
-      <p>Only admins can see this page.</p>
-    </div>
-  `,
-  styles: [`
-    .top-bar {
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
-      padding: 8px 16px;
-    }
-    .spacer {
-      flex: 1;
-    }
-  `]
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    RouterModule,
+    MatTabsModule,
+    MatFormFieldModule,
+    MatSelectModule,
+    MatButtonModule,
+    MatDialogModule,
+    MatCardModule,
+    BaseChartDirective,          // for baseChart on <canvas>
+  ],
+  templateUrl: './admin.html',
+  styleUrls: ['./admin.scss'],
 })
 export class AdminComponent {
-  private auth = inject(AuthService);
-  private router = inject(Router);
+  months = Array.from({ length: 12 }, (_, i) => ({
+    value: i + 1,
+    label: new Date(2000, i, 1).toLocaleString('en', { month: 'long' })
+  }));
+  environmentTypes: EnvironmentType[] = ['Any','Beach','Hill Country','City','Wildlife','Cultural'];
+  accomodationTypes: AccommodationType[] = ['Any','Hotel','Resort','Villa','Guest House','Hostel'];
+
+  // all mock data
+  private allAccommodations: Accommodation[] = ACCOMMODATIONS;
+
+  // declare with definite assignment; initialize in constructor
+  tab1Form!: FormGroup;
+  tab2Form!: FormGroup;
+  tab3Form!: FormGroup;
+
+  tab1Results = signal<any[]>([]);
+  tab2Results = signal<any[]>([]);
+  tab3Results = signal<any[]>([]);
+
+  private dialog = inject(MatDialog);
+
+    // labels for the 12 months
+  monthLabels: string[] = [
+    'Jan','Feb','Mar','Apr','May','Jun',
+    'Jul','Aug','Sep','Oct','Nov','Dec'
+  ];
+
+  // Chart options used in the template
+  temperatureBarOptions: ChartConfiguration['options'] = {
+    responsive: true,
+    plugins: {
+      legend: { display: false }
+    },
+    scales: {
+      x: {},
+      y: {
+        beginAtZero: true,
+        max: 60,
+        title: { display: true, text: '°C' }
+      }
+    }
+  };
+
+  precipitationBarOptions: ChartConfiguration['options'] = {
+    responsive: true,
+    plugins: {
+      legend: { display: false }
+    },
+    scales: {
+      x: {},
+      y: {
+        beginAtZero: true,
+        max: 200,
+        title: { display: true, text: 'mm' }
+      }
+    }
+  };
+
+  CrimeRateBarOptions: ChartConfiguration['options'] = {
+    responsive: true,
+    plugins: {
+      legend: { display: false }
+    },
+    scales: {
+      x: {},
+      y: {
+        beginAtZero: true,
+        max: 1,
+        title: { display: true }
+      }
+    }
+  };
+
+  AccidentRateBarOptions: ChartConfiguration['options'] = {
+    responsive: true,
+    plugins: {
+      legend: { display: false }
+    },
+    scales: {
+      x: {},
+      y: {
+        beginAtZero: true,
+        max: 1,
+        title: { display: true }
+      }
+    }
+  };
+
+  // Build chart data for one accommodation
+  getTempChartData(a: any): ChartConfiguration['data'] {
+    const temps: number[] = this.monthLabels.map((_, idx) => {
+      // avgTempByMonthC has keys 1..12
+      return a?.avgTempByMonthC?.[idx + 1] ?? 0;
+    });
+
+    return {
+      labels: this.monthLabels,
+      datasets: [
+        {
+          data: temps,
+          label: 'Avg Temperature (°C)'
+        }
+      ]
+    };
+  }
+
+  getPrecipitationChartData(a: any): ChartConfiguration['data'] {
+    const temps: number[] = this.monthLabels.map((_, idx1) => {
+      return a?.avgPrecipByMonthMm?.[idx1 + 1] ?? 0;
+    });
+
+    return {
+      labels: this.monthLabels,
+      datasets: [
+        {
+          data: temps,
+          label: 'Avg Precipitation (mm)'
+        }
+      ]
+    };
+  }
+
+  getCrimeRateChartData(a: any): ChartConfiguration['data'] {
+    const temps: number[] = this.monthLabels.map((_, idx2) => {
+      return a?.avgCrimeRateByMonth?.[idx2 + 1] ?? 0;
+    });
+
+    return {
+      labels: this.monthLabels,
+      datasets: [
+        {
+          data: temps,
+          label: 'Avg Crime Rate Per Month'
+        }
+      ]
+    };
+  }
+
+  getAccidentRateChartData(a: any): ChartConfiguration['data'] {
+    const temps: number[] = this.monthLabels.map((_, idx3) => {
+      return a?.avgAccidentRateByMonth?.[idx3 + 1] ?? 0;
+    });
+
+    return {
+      labels: this.monthLabels,
+      datasets: [
+        {
+          data: temps,
+          label: 'Avg Accident Rate Per Month'
+        }
+      ]
+    };
+  }
+
+
+  constructor(
+    private fb: FormBuilder, 
+    private svc: AccommodationService,
+    private auth: AuthService, 
+    private router: Router  
+  ) {
+    this.tab1Form = this.fb.group({
+      month: [null as number | null],
+      environmentType: [null as EnvironmentType | null],
+      accomodationType: [null as AccommodationType | null],
+    });
+
+    this.tab2Form = this.fb.group({
+      month: [null as number | null],
+      environmentType: [null as EnvironmentType | null],
+      accomodationType: [null as AccommodationType | null],
+    });
+
+    this.tab3Form = this.fb.group({
+      accomodationType: [null as AccommodationType | null]
+    });
+  }
+
+  searchTab1() {
+    const { month, environmentType, accomodationType } = this.tab1Form.value;
+
+    if( month != null && environmentType != null && accomodationType != null){
+      this.svc.searchBasicHttp({
+        month: month ?? null,
+        environmentType: environmentType ?? null,      // map -> environment
+        accomodationType: accomodationType ?? null,            // map -> type
+      }).subscribe({
+        next: (list) => this.tab1Results.set(list),
+        error: (err) => {
+          console.error('Accommodation selection search failed', err);
+          this.tab1Results.set([]);
+        }
+      });
+    }else{
+      //open a popup asking to select values in drop downs
+      this.dialog.open(InfoDialogComponent, {
+        data: {
+          title: 'Selections required',
+          message: 'Please select Month, Environment, and Accommodation Type before searching.'
+        }
+      });
+    }
+
+    
+  }
+
+  searchTab2() {
+    const { month } = this.tab2Form.value;
+
+    if( month != null ){
+      this.svc.searchBasedOnWeather({
+        month: month ?? null
+      }).subscribe({
+        next: (list) => this.tab2Results.set(list),
+        error: (err) => {
+          console.error('Month selection search failed', err);
+          this.tab2Results.set([]);
+        }
+      });
+    }else{
+      //open a popup asking to select values in drop downs
+      this.dialog.open(InfoDialogComponent, {
+        data: {
+          title: 'Selections required',
+          message: 'Please select Month before searching.'
+        }
+      });
+    }
+  }
+
+  getWeatherClass(status: string | undefined): string {
+    switch (status) {
+      case 'Super':
+        return 'weather-super';
+      case 'Normal':
+        return 'weather-normal';
+      case 'Bad':
+        return 'weather-bad';
+      default:
+        return '';
+    }
+  }
+
+    // Search for Tab 3 (Type of Accommodation)
+  searchTab3(): void {
+
+    const { accomodationType } = this.tab3Form.value;
+
+    if( accomodationType != null ){
+      this.svc.accomodationTypeInformation({
+        accomodationType: accomodationType ?? null
+      }).subscribe({
+        next: (list) => this.tab3Results.set(list),
+        error: (err) => {
+          console.error('accomodationType selection search failed', err);
+          this.tab3Results.set([]);
+        }
+      });
+    }else{
+      //open a popup asking to select values in drop downs
+      this.dialog.open(InfoDialogComponent, {
+        data: {
+          title: 'Selections required',
+          message: 'Please select accomodationType before searching.'
+        }
+      });
+    }
+  }
 
   logout(): void {
-    this.auth.logout();               // clear user info + token
+    this.auth.logout();               // clear user info
     this.router.navigate(['/login']); // go back to login page
   }
+
 }

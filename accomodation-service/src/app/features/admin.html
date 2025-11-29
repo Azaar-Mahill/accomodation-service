@@ -1,0 +1,200 @@
+<div class="top-bar">
+  <span>Welcome to Tourism Accommodation Recommender</span>
+  <span class="spacer"></span>
+  <button mat-stroked-button color="warn" (click)="logout()">
+    Logout
+  </button>
+</div>
+
+<div style="padding: 16px">
+  <h2>Admin page</h2>
+  <p>Only admins can see this page.</p>
+</div>
+
+<mat-tab-group>
+  <!-- TAB1 -->
+  <mat-tab label="Accommodation Selection">
+    <form class="panel" [formGroup]="tab1Form">
+      <div class="content-layout">
+        <div class="filters">
+          <mat-form-field appearance="outline">
+            <mat-label>Month hope to visit</mat-label>
+            <mat-select formControlName="month">
+              <mat-option *ngFor="let m of months" [value]="m.value">{{ m.label }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Type of Environment</mat-label>
+            <mat-select formControlName="environmentType">
+              <mat-option *ngFor="let e of environmentTypes" [value]="e">{{ e }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Type of Accommodation</mat-label>
+            <mat-select formControlName="accomodationType">
+              <mat-option *ngFor="let t of accomodationTypes" [value]="t">{{ t }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <button mat-raised-button color="primary" type="button" (click)="searchTab1()">Search</button>
+        </div>
+
+        <div class="results">
+          <mat-card *ngFor="let a of tab1Results()">
+            <mat-card-title>Name of Accommodation: {{ a.accommodationName }}</mat-card-title>
+            <mat-card-content>
+              <p><strong>Address:</strong> {{ a.accommodationAddress }}</p>
+            </mat-card-content>
+            <mat-card-actions>
+              <a mat-button color="accent" [routerLink]="['/book', a.id]">Click to book</a>
+            </mat-card-actions>
+          </mat-card>
+        </div>
+      </div>
+    </form>
+  </mat-tab>
+
+  <!-- TAB2 -->
+  <mat-tab label="Weather and Safety of Accommodations">
+    <form class="panel" [formGroup]="tab2Form">
+      <div class="content-layout">
+        <div class="filters">
+          <mat-form-field appearance="outline">
+            <mat-label>Month hope to visit</mat-label>
+            <mat-select formControlName="month" required>
+              <mat-option *ngFor="let m of months" [value]="m.value">{{ m.label }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+
+          <button mat-raised-button color="primary" type="button" (click)="searchTab2()">Search</button>
+        </div>
+
+        <div class="results">
+          <mat-card *ngFor="let a of tab2Results()">
+            <mat-card-title>Name of Accommodation: {{ a.accommodationName }}</mat-card-title>
+            <mat-card-content>
+              <p><strong>Address:</strong> {{ a.accommodationAddress }}</p>
+              <p><strong>Environment:</strong> {{ a.environment}}</p>
+            </mat-card-content>
+            <mat-card-content>
+              <p><strong>Average temperature:</strong> {{ a.temperature }} °C</p>
+              <p><strong>Average precipitation:</strong> {{ a.precipitation }} mm</p>
+              <p>
+                <strong>Weather Status: </strong>
+                <span [ngClass]="getWeatherClass(a.weatherStatus)">
+                  {{ a.weatherStatus }}
+                </span>
+              </p>
+            </mat-card-content>
+            <mat-card-content>
+              <p><strong>Accident rate:</strong> {{ a.accidentRate}}</p>
+              <p><strong>Crime rate:</strong> {{ a.crimeRate }}</p>
+              <p>
+                <strong>Safety Status: </strong>
+                <span [ngClass]="getWeatherClass(a.safetyStatus)">
+                  {{ a.safetyStatus }}
+                </span>
+              </p>
+            </mat-card-content>
+            <mat-card-actions>
+              <a mat-button color="accent" [routerLink]="['/book', a.id]">Click to book</a>
+            </mat-card-actions>
+          </mat-card>
+        </div>
+      </div>
+    </form>
+  </mat-tab>
+
+<!-- TAB3 -->
+  <mat-tab label="Type of Accommodations">
+    <form class="panel" [formGroup]="tab3Form">
+      <div class="content-layout">
+        <div class="filters">
+          <mat-form-field appearance="outline">
+            <mat-label>Type of Accommodation</mat-label>
+            <mat-select formControlName="accomodationType">
+              <mat-option *ngFor="let t of accomodationTypes" [value]="t">{{ t }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <button mat-raised-button color="primary" type="button" (click)="searchTab3()">Search</button>
+        </div>
+
+        <div class="results3">
+          <mat-card class="accommodation-card" *ngFor="let a of tab3Results()">
+            <mat-card-title>Name of Accommodation: {{ a.accommodationName }}</mat-card-title>
+            <mat-card-content>
+              <p><strong>Environment:</strong> {{ a.environment }}</p>
+            </mat-card-content>
+            <mat-card-content>
+              <p><strong>Address:</strong> {{ a.accommodationAddress }}</p>
+            </mat-card-content>
+
+            <!-- 🔹 One row with 2 charts horizontally -->
+            <mat-card-content class="chart-row">
+              <div class="chart-box">
+                <p><strong>Average temperature graph</strong></p>
+                <div class="chart-container">
+                  <canvas
+                    baseChart
+                    [type]="'bar'"
+                    [data]="getTempChartData(a)"
+                    [options]="temperatureBarOptions">
+                  </canvas>
+                </div>
+              </div>
+
+              <div class="chart-box">
+                <p><strong>Average precipitation graph</strong></p>
+                <div class="chart-container">
+                  <canvas
+                    baseChart
+                    [type]="'bar'"
+                    [data]="getPrecipitationChartData(a)"
+                    [options]="precipitationBarOptions">
+                  </canvas>
+                </div>
+              </div>
+            </mat-card-content>
+
+            <mat-card-content class="chart-row">
+              <div class="chart-box">
+                <p><strong>Average crime rate graph</strong></p>
+                <div class="chart-container">
+                  <canvas
+                    baseChart
+                    [type]="'bar'"
+                    [data]="getCrimeRateChartData(a)"
+                    [options]="CrimeRateBarOptions">
+                  </canvas>
+                </div>
+              </div>
+
+              <div class="chart-box">
+                <p><strong>Average accident rate graph</strong></p>
+                <div class="chart-container">
+                  <canvas
+                    baseChart
+                    [type]="'bar'"
+                    [data]="getAccidentRateChartData(a)"
+                    [options]="AccidentRateBarOptions">
+                  </canvas>
+                </div>
+              </div>
+            </mat-card-content>
+
+
+
+            <mat-card-actions>
+              <a mat-button color="accent" [routerLink]="['/book', a.id]">Click to book</a>
+            </mat-card-actions>
+          </mat-card>
+        </div>
+      </div>
+    </form>
+  </mat-tab>
+
+</mat-tab-group>

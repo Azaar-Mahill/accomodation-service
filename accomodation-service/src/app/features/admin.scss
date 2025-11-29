@@ -1,0 +1,75 @@
+.top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 8px 16px;
+}
+
+.spacer {
+  flex: 1;
+}
+
+.panel {
+  padding: 1rem;
+}
+
+.content-layout {
+  display: flex;
+  gap: 2rem;
+  align-items: flex-start;
+}
+
+.filters {
+  flex: 0 0 280px; /* fixed width for filters */
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.results {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1rem;
+}
+
+.weather-super {
+  color: green;
+}
+
+.weather-normal {
+  color: orange;   /* or 'goldenrod' / 'orange' if orange is hard to see */
+}
+
+.weather-bad {
+  color: red;
+}
+
+.chart-row {
+  display: flex;
+  gap: 16px;        /* space between the two charts */
+  margin-top: 8px;
+}
+
+.chart-box {
+  flex: 1;          /* both charts take equal width */
+  min-width: 0;     /* helps avoid overflow */
+}
+
+.chart-container {
+  height: 150px;    /* same as your inline style before */
+}
+
+
+.results3 {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr)); /* 2 cards per row */
+  gap: 16px; /* space between cards */
+}
+
+/* Optional: on small screens, switch to 1 per row */
+@media (max-width: 900px) {
+  .results {
+    grid-template-columns: 1fr;
+  }
+}
