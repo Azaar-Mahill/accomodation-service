@@ -53,9 +53,11 @@ public class AccommodationController {
     public List<AccomodationKPIDTO> KPIInformation(
             @RequestParam(required = false) String province,
             @RequestParam(required = false) String useDistrict,
-            @RequestParam(required = false) String district
+            @RequestParam(required = false) String district,
+            @RequestParam(required = false) String useCity,
+            @RequestParam(required = false) String city
     ) {
-        return svc.findKPIInformation(province, useDistrict,district);
+        return svc.findKPIInformation(province, useDistrict,district, useCity, city);
     }
 }
 

@@ -530,13 +530,23 @@ public class AccommodationService {
 
     }
 
-    public List<AccomodationKPIDTO> findKPIInformation(String province, String useDistrict,String district) {
+    public List<AccomodationKPIDTO> findKPIInformation(String province, String useDistrict,String district,String useCity,String city) {
 
         List<String> accomodationLocationSks = new ArrayList<>();
 
-        if(useDistrict == "true"){
+        boolean useDistrictFlag = "true".equalsIgnoreCase(useDistrict);
+        boolean useCityFlag = "true".equalsIgnoreCase(useCity);
+
+        if (useCityFlag && district != null && city != null) {
+            // province + district + city
+            accomodationLocationSks = accommodationLocationRepository.findAccommodationLocationSksByProvinceAndDistrictCity(province, district, city);
+
+        } else if (useDistrictFlag && district != null) {
+            // province + district only
             accomodationLocationSks = accommodationLocationRepository.findAccommodationLocationSksByProvinceAndDistrict(province, district);
-        }else{
+
+        } else {
+            // province only
             accomodationLocationSks = accommodationLocationRepository.findAccommodationLocationSksByProvince(province);
         }
 

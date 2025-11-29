@@ -40,6 +40,31 @@
                   {{ d }}
                   </mat-option>
               </mat-select>
+
+              </mat-form-field>
+
+              <mat-checkbox
+                *ngIf="tab4Form.get('useDistrict')?.value"
+                formControlName="useCity"
+                style="margin-left: 16px;"
+                [disabled]="!tab4Form.get('district')?.value"
+              >
+                Filter by city
+              </mat-checkbox>
+
+              <mat-form-field
+                appearance="outline"
+                *ngIf="tab4Form.get('useCity')?.value"
+              >
+                <mat-label>Name of City</mat-label>
+                <mat-select formControlName="city">
+                  <mat-option
+                    *ngFor="let c of getCitiesForSelectedDistrict()"
+                    [value]="c"
+                  >
+                    {{ c }}
+                  </mat-option>
+                </mat-select>
               </mat-form-field>
 
               <button

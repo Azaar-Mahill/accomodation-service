@@ -62,6 +62,15 @@ public interface AccommodationLocationRepository extends JpaRepository<Accommoda
            AND LOWER(a.district) = LOWER(:district)
            """)
     List<String> findAccommodationLocationSksByProvinceAndDistrict(@Param("province") String province, @Param("district") String district);
+
+    @Query("""
+           SELECT a.accommodationLocationSk
+           FROM AccommodationLocation a
+           WHERE LOWER(a.province) = LOWER(:province)
+           AND LOWER(a.district) = LOWER(:district)
+            AND LOWER(a.city) = LOWER(:city)
+           """)
+    List<String> findAccommodationLocationSksByProvinceAndDistrictCity(@Param("province") String province, @Param("district") String district, @Param("city") String city);
 }
 
 

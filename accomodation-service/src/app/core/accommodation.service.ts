@@ -82,19 +82,24 @@ export class AccommodationService {
   }
 
   KPIInformation(params: {
-    province?: string | null | null;
-    useDistrict?: Boolean | null | null;
-    district?: string | null | null;
+    province?: string | null;
+    useDistrict?: boolean | null;
+    district?: string | null;
+    useCity?: boolean | null;
+    city?: string | null;
   }): Observable<Accommodation5[]> {
     let httpParams = new HttpParams();
     if (params.province) httpParams = httpParams.set('province', params.province);
-    if (params.useDistrict) httpParams = httpParams.set('useDistrict', String(params.useDistrict));
+    if (params.useDistrict != null) httpParams = httpParams.set('useDistrict', String(params.useDistrict));
     if (params.district) httpParams = httpParams.set('district', params.district);
+    if (params.useCity != null) httpParams = httpParams.set('useCity', String(params.useCity));
+    if (params.city) httpParams = httpParams.set('city', params.city);
 
     return this.http.get<Accommodation5[]>(
       `${this.baseUrl}/api/accommodations/KPIInformation`,
       { params: httpParams }
     );
   }
+
 
 }

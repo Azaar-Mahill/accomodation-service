@@ -73,6 +73,35 @@ export class AdminComponent {
     Sabaragamuwa: ['Ratnapura', 'Kegalle'],
   };
 
+  // ✅ cities by district (example values, adjust as you like)
+  citiesByDistrict: { [district: string]: string[] } = {
+    Colombo: ['Colombo', 'Dehiwala', 'Moratuwa'],
+    Gampaha: ['Gampaha', 'Negombo', 'Ja-Ela'],
+    Kalutara: ['Kalutara', 'Panadura', 'Horana'],
+
+    Kandy: ['Kandy', 'Peradeniya', 'Katugastota'],
+    Matale: ['Matale', 'Dambulla'],
+    'Nuwara Eliya': ['Nuwara Eliya', 'Hatton'],
+
+    Galle: ['Galle', 'Hikkaduwa'],
+    Matara: ['Matara', 'Weligama'],
+    Hambantota: ['Hambantota', 'Tangalle'],
+
+    Jaffna: ['Jaffna', 'Chavakachcheri'],
+    Trincomalee: ['Trincomalee'],
+    Batticaloa: ['Batticaloa'],
+    Ampara: ['Ampara'],
+    Kurunegala: ['Kurunegala'],
+    Puttalam: ['Puttalam'],
+    Anuradhapura: ['Anuradhapura'],
+    Polonnaruwa: ['Polonnaruwa'],
+    Badulla: ['Badulla'],
+    Monaragala: ['Monaragala'],
+    Ratnapura: ['Ratnapura'],
+    Kegalle: ['Kegalle'],
+  };
+
+
 
   // all mock data
   private allAccommodations: Accommodation[] = ACCOMMODATIONS;
@@ -298,7 +327,10 @@ export class AdminComponent {
       province: [null as string | null],
       useDistrict: [false],
       district: [null as string | null],
+      useCity: [false],
+      city: [null as string | null],
     });
+
 
     this.tab5Form = this.fb.group({
       accomodationType: [null as AccommodationType | null]
@@ -306,45 +338,59 @@ export class AdminComponent {
   }
 
   searchTab4(): void {
-  const { province, useDistrict, district } = this.tab4Form.value as {
-    province: string | null;
-    useDistrict: boolean;
-    district: string | null;
-  };
+    const { province, useDistrict, district, useCity, city } = this.tab4Form.value as {
+      province: string | null;
+      useDistrict: boolean;
+      district: string | null;
+      useCity: boolean;
+      city: string | null;
+    };
 
-  if (province != null) {
-    if((useDistrict == true) && (district == null)){
-      this.dialog.open(InfoDialogComponent, {
-      data: {
-        title: 'Selections required',
-        message: 'Please select a district or uncheck the checkbox before searching.'
+    if (province != null) {
+
+      if (useDistrict === true && district == null) {
+        this.dialog.open(InfoDialogComponent, {
+          data: {
+            title: 'Selections required',
+            message: 'Please select a district or uncheck the checkbox before searching.'
+          }
+        });
+        return;
       }
-    });
-    }else{
+
+      if (useCity === true && city == null) {
+        this.dialog.open(InfoDialogComponent, {
+          data: {
+            title: 'Selections required',
+            message: 'Please select a city or uncheck the city checkbox before searching.'
+          }
+        });
+        return;
+      }
+
       this.svc.KPIInformation({
         province: province ?? null,
         useDistrict: useDistrict ?? null,
-        district: district ?? null
+        district: district ?? null,
+        useCity: useCity ?? null,
+        city: city ?? null,
       }).subscribe({
-        next: (list) => this.tab4Results.set(list), 
+        next: (list) => this.tab4Results.set(list),
         error: (err) => {
           console.error('KPI search failed', err);
           this.tab4Results.set([]);
         }
       });
+
+    } else {
+      this.dialog.open(InfoDialogComponent, {
+        data: {
+          title: 'Selections required',
+          message: 'Please select a province before searching.'
+        }
+      });
     }
-    
-  } else {
-    this.dialog.open(InfoDialogComponent, {
-      data: {
-        title: 'Selections required',
-        message: 'Please select a province before searching.'
-      }
-    });
   }
-}
-
-
 
   searchTab5(): void {
 
@@ -379,6 +425,13 @@ export class AdminComponent {
     return this.districtsByProvince[province] ?? [];
   }
 
+  getCitiesForSelectedDistrict(): string[] {
+    const district = this.tab4Form.get('district')?.value as string | null;
+    if (!district) {
+      return [];
+    }
+    return this.citiesByDistrict[district] ?? [];
+  }
 
   logout(): void {
     this.auth.logout();               // clear user info
