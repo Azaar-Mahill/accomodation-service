@@ -51,5 +51,14 @@ public class AccommodationController {
     ) {
         return svc.findAccomodationById(accomodationSK);
     }
+
+    @GetMapping("/KPIInformation")
+    public void KPIInformation(
+            @RequestParam(required = false) String province,
+            @RequestParam(required = false) Boolean useDistrict,
+            @RequestParam(required = false) String district
+    ) {
+        svc.findKPIInformation(province, useDistrict,district);
+    }
 }
 

@@ -146,30 +146,45 @@ export class AdminComponent {
     });
   }
 
-    searchTab4(): void {
-    const { province, useDistrict, district } = this.tab4Form.value;
+  searchTab4(): void {
+  const { province, useDistrict, district } = this.tab4Form.value as {
+    province: string | null;
+    useDistrict: boolean;
+    district: string | null;
+  };
 
-    if (!province) {
+  if (province != null) {
+    if((useDistrict == true) && (district == null)){
       this.dialog.open(InfoDialogComponent, {
-        data: {
-          title: 'Selections required',
-          message: 'Please select a province before searching.',
-        },
+      data: {
+        title: 'Selections required',
+        message: 'Please select a district or uncheck the checkbox before searching.'
+      }
+    });
+    }else{
+      this.svc.KPIInformation({
+        province: province ?? null,
+        useDistrict: useDistrict ?? null,
+        district: district ?? null
+      }).subscribe({
+        next: (list) => this.tab4Results.set(list), 
+        error: (err) => {
+          console.error('KPI search failed', err);
+          this.tab4Results.set([]);
+        }
       });
-      return;
     }
-
-    const payload: any = { province };
-
-    if (useDistrict && district) {
-      payload.district = district;
-    }
-
-    console.log('KPI search payload:', payload);
-
-    // call your KPI service here:
-    // this.svc.kpiSearch(payload).subscribe(...)
+    
+  } else {
+    this.dialog.open(InfoDialogComponent, {
+      data: {
+        title: 'Selections required',
+        message: 'Please select a province before searching.'
+      }
+    });
   }
+}
+
 
 
   searchTab5(): void {

@@ -521,5 +521,11 @@ public class AccommodationService {
         return accomodationByIdDTO;
 
     }
+
+    public void findKPIInformation(String province, Boolean useDistrict,String district) {
+
+
+
+    }
 }
 

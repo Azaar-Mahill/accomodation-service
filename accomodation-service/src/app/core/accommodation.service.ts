@@ -1,7 +1,7 @@
 import { Injectable, signal } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { ACCOMMODATIONS } from './mock-accommodations';
-import { Accommodation, Accommodation2, Accommodation3, Accommodation4, AccommodationType, EnvironmentType } from './models';
+import { Accommodation, Accommodation2, Accommodation3, Accommodation4, Accommodation5, AccommodationType, EnvironmentType } from './models';
 import { environment } from '../../environments/environment';
 import { Observable } from 'rxjs';
 
@@ -77,6 +77,22 @@ export class AccommodationService {
 
     return this.http.get<Accommodation3[]>(
       `${this.baseUrl}/api/accommodations/accomodationTypeInformation`,
+      { params: httpParams }
+    );
+  }
+
+  KPIInformation(params: {
+    province?: string | null | null;
+    useDistrict?: Boolean | null | null;
+    district?: string | null | null;
+  }): Observable<Accommodation5[]> {
+    let httpParams = new HttpParams();
+    if (params.province) httpParams = httpParams.set('province', params.province);
+    if (params.useDistrict) httpParams = httpParams.set('useDistrict', String(params.useDistrict));
+    if (params.district) httpParams = httpParams.set('district', params.district);
+
+    return this.http.get<Accommodation5[]>(
+      `${this.baseUrl}/api/accommodations/KPIInformation`,
       { params: httpParams }
     );
   }

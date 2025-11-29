@@ -52,3 +52,15 @@ export interface Accommodation4 {
   avgPrecipByMonthMm: Record<number, number>;    // 1..12
   bookingUrl?: string;
 }
+
+export interface Accommodation5 {
+  id: string;
+  accommodationName: string;
+  accommodationAddress: string;
+  district: string;
+  environment: EnvironmentType;
+  accommodationType: AccommodationType;
+  avgTempByMonthC: Record<number, number>;       // 1..12
+  avgPrecipByMonthMm: Record<number, number>;    // 1..12
+  bookingUrl?: string;
+}
