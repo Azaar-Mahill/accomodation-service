@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -573,6 +574,7 @@ public class AccommodationService {
             Map<Integer, BigDecimal> revenueByMonth = new HashMap<>();
             Map<Integer, BigDecimal> averageDailyRate = new HashMap<>();
             Map<Integer, BigDecimal> revenuePerAvailableRoom = new HashMap<>();
+            Map<Integer, BigDecimal> averageLengthOfStay = new HashMap<>();
 
             for (int month = 1; month <= 12; month++) {
 
@@ -582,6 +584,8 @@ public class AccommodationService {
                 List<String> roomSks = new ArrayList<>();
                 BigDecimal averageDailyRatePerMonth = BigDecimal.ZERO;
                 BigDecimal revenuePerAvailableRoomPerMonth = BigDecimal.ZERO;
+                int totalNumberOfDaysStayed = 0;
+                BigDecimal averageLengthOfStayPerMonth = BigDecimal.ZERO;
 
                 for (BookAccomodation booking : listOfBookings) {
 
@@ -603,6 +607,14 @@ public class AccommodationService {
                         roomSks.add(booking.getRoomSk());
                         totalNumberOfRooms = totalNumberOfRooms + 1;
                     }
+
+                    String checkinDate= booking.getCheckinDateSk();
+                    String checkoutDate= booking.getCheckoutDateSk();
+
+                    LocalDate checkin = LocalDate.parse(checkinDate);
+                    LocalDate checkout = LocalDate.parse(checkoutDate);
+
+                    totalNumberOfDaysStayed = (int) (totalNumberOfDaysStayed + ChronoUnit.DAYS.between(checkin, checkout)+1);
                 }
 
                 if (totalNumberOfRooms > 0) {
@@ -621,21 +633,25 @@ public class AccommodationService {
                             2,                              // scale (2 decimal places)
                             RoundingMode.HALF_UP            // rounding mode
                     );
+                    averageLengthOfStayPerMonth = BigDecimal.valueOf(totalNumberOfDaysStayed/totalMonthBookings);
+
                 } else {
                     revenuePerAvailableRoomPerMonth = BigDecimal.ZERO;
+                    averageLengthOfStayPerMonth = BigDecimal.ZERO;
                 }
 
                 bookingsByMonth.put(month, totalMonthBookings);
                 revenueByMonth.put(month, totalMonthRevenue);   // <-- MUST be added
                 averageDailyRate.put(month, averageDailyRatePerMonth);
                 revenuePerAvailableRoom.put(month, revenuePerAvailableRoomPerMonth);
+                averageLengthOfStay.put(month, averageLengthOfStayPerMonth);
             }
-
 
             accomodationKPIDTO.setBookingsByMonth(bookingsByMonth);
             accomodationKPIDTO.setRevenueByMonth(revenueByMonth);
             accomodationKPIDTO.setAverageDailyRate(averageDailyRate);
             accomodationKPIDTO.setRevenuePerAvailableRoom(revenuePerAvailableRoom);
+            accomodationKPIDTO.setAverageLengthOfStay(averageLengthOfStay);
 
             listOfAccomodationKPIDTO.add(accomodationKPIDTO);
 

@@ -33,4 +33,6 @@ public class AccomodationKPIDTO {
     private Map<Integer, BigDecimal> averageDailyRate;
 
     private Map<Integer, BigDecimal> revenuePerAvailableRoom;
+
+    private Map<Integer, BigDecimal> averageLengthOfStay;
 }

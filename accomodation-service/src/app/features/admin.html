@@ -112,6 +112,21 @@
                 </div>
                 
               </mat-card-content>
+
+              <mat-card-content class="chart-row">
+                <div class="chart-box">
+                  <p><strong>Average Length Of Stay graph</strong></p>
+                  <div class="chart-container">
+                    <canvas
+                      baseChart
+                      [type]="'bar'"
+                      [data]="getAverageLengthOfStayChartData(a)"
+                      [options]="averageLengthOfStayBarOptions">
+                    </canvas>
+                  </div>
+                </div>
+                
+              </mat-card-content>
             </mat-card>
           </div>
         </div>

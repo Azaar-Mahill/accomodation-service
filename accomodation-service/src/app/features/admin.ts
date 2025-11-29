@@ -153,6 +153,21 @@ export class AdminComponent {
     }
   };
 
+  averageLengthOfStayBarOptions: ChartConfiguration['options'] = {
+    responsive: true,
+    plugins: {
+      legend: { display: false }
+    },
+    scales: {
+      x: {},
+      y: {
+        beginAtZero: true,
+        max: 30,
+        title: { display: true, text: 'nights per booking' }
+      }
+    }
+  };
+
   temperatureBarOptions: ChartConfiguration['options'] = {
     responsive: true,
     plugins: {
@@ -185,8 +200,6 @@ export class AdminComponent {
       ]
     };
   }
-
-  
 
   getRevenuesChartData(a: any): ChartConfiguration['data'] {
     const temps: number[] = this.monthLabels.map((_, idx) => {
@@ -234,6 +247,23 @@ export class AdminComponent {
         {
           data: temps,
           label: 'rupees per booking'
+        }
+      ]
+    };
+  }
+
+  getAverageLengthOfStayChartData(a: any): ChartConfiguration['data'] {
+    const temps: number[] = this.monthLabels.map((_, idx) => {
+      // avgTempByMonthC has keys 1..12
+      return a?.averageLengthOfStay?.[idx + 1] ?? 0;
+    });
+
+    return {
+      labels: this.monthLabels,
+      datasets: [
+        {
+          data: temps,
+          label: 'nights per booking'
         }
       ]
     };
