@@ -75,33 +75,216 @@ export class AdminComponent {
 
   // ✅ cities by district (example values, adjust as you like)
   citiesByDistrict: { [district: string]: string[] } = {
-    Colombo: ['Colombo', 'Dehiwala', 'Moratuwa'],
-    Gampaha: ['Gampaha', 'Negombo', 'Ja-Ela'],
-    Kalutara: ['Kalutara', 'Panadura', 'Horana'],
+    Colombo: [
+      'Colombo',
+      'Dehiwala',
+      'Mount Lavinia',
+      'Moratuwa',
+      'Kesbewa',
+      'Nugegoda',
+      'Homagama'
+    ],
+    Gampaha: [
+      'Gampaha',
+      'Negombo',
+      'Ja-Ela',
+      'Wattala',
+      'Kelaniya',
+      'Minuwangoda'
+    ],
+    Kalutara: [
+      'Kalutara',
+      'Panadura',
+      'Beruwala',
+      'Aluthgama',
+      'Horana',
+      'Matugama'
+    ],
 
-    Kandy: ['Kandy', 'Peradeniya', 'Katugastota'],
-    Matale: ['Matale', 'Dambulla'],
-    'Nuwara Eliya': ['Nuwara Eliya', 'Hatton'],
+    Kandy: [
+      'Kandy',
+      'Peradeniya',
+      'Gampola',
+      'Katugastota',
+      'Pilimatalawe',
+      'Nawalapitiya'
+    ],
+    Matale: [
+      'Matale',
+      'Dambulla',
+      'Sigiriya',
+      'Rattota',
+      'Ukuwela',
+      'Palapathwela'
+    ],
+    'Nuwara Eliya': [
+      'Nuwara Eliya',
+      'Hatton',
+      'Talawakele',
+      'Nanu Oya',
+      'Ginigathhena',
+      'Ragala'
+    ],
 
-    Galle: ['Galle', 'Hikkaduwa'],
-    Matara: ['Matara', 'Weligama'],
-    Hambantota: ['Hambantota', 'Tangalle'],
+    Galle: [
+      'Galle',
+      'Hikkaduwa',
+      'Unawatuna',
+      'Ambalangoda',
+      'Batapola',
+      'Elpitiya'
+    ],
+    Matara: [
+      'Matara',
+      'Weligama',
+      'Mirissa',
+      'Akurugoda',
+      'Dikwella',
+      'Hakmana'
+    ],
+    Hambantota: [
+      'Hambantota',
+      'Tangalle',
+      'Tissamaharama',
+      'Ambalantota',
+      'Kataragama',
+      'Beliatta'
+    ],
 
-    Jaffna: ['Jaffna', 'Chavakachcheri'],
-    Trincomalee: ['Trincomalee'],
-    Batticaloa: ['Batticaloa'],
-    Ampara: ['Ampara'],
-    Kurunegala: ['Kurunegala'],
-    Puttalam: ['Puttalam'],
-    Anuradhapura: ['Anuradhapura'],
-    Polonnaruwa: ['Polonnaruwa'],
-    Badulla: ['Badulla'],
-    Monaragala: ['Monaragala'],
-    Ratnapura: ['Ratnapura'],
-    Kegalle: ['Kegalle'],
+    Jaffna: [
+      'Jaffna',
+      'Chavakachcheri',
+      'Point Pedro',
+      'Nallur',
+      'Karainagar',
+      'Velanai'
+    ],
+    Kilinochchi: [
+      'Kilinochchi',
+      'Karachchi',
+      'Pallai',
+      'Paranthan',
+      'Poonakary',
+      'Kandavalai'
+    ],
+    Mannar: [
+      'Mannar',
+      'Thalaimannar',
+      'Madhu',
+      'Nanattan',
+      'Murunkan',
+      'Pesalai'
+    ],
+    Vavuniya: [
+      'Vavuniya',
+      'Vavuniya South',
+      'Cheddikulam',
+      'Nedunkeni',
+      'Settikulam',
+      'Puliyankulam'
+    ],
+    Mullaitivu: [
+      'Mullaitivu',
+      'Puthukkudiyiruppu',
+      'Oddusuddan',
+      'Maritimepattu',
+      'Welioya',
+      'Kokkilai'
+    ],
+
+    Batticaloa: [
+      'Batticaloa',
+      'Eravur',
+      'Kattankudy',
+      'Valaichchenai',
+      'Arayampathy',
+      'Kaluwanchikudy'
+    ],
+    Ampara: [
+      'Ampara',
+      'Kalmunai',
+      'Sainthamaruthu',
+      'Akkaraipattu',
+      'Uhana',
+      'Sammanthurai'
+    ],
+    Trincomalee: [
+      'Trincomalee',
+      'Kinniya',
+      'Kantalai',
+      'Mutur',
+      'Nilaveli',
+      'China Bay'
+    ],
+
+    Anuradhapura: [
+      'Anuradhapura',
+      'Kekirawa',
+      'Eppawala',
+      'Medawachchiya',
+      'Thambuttegama',
+      'Nochchiyagama'
+    ],
+    Polonnaruwa: [
+      'Polonnaruwa',
+      'Hingurakgoda',
+      'Medirigiriya',
+      'Dimbulagala',
+      'Aralaganwila',
+      'Elahera'
+    ],
+
+    Kurunegala: [
+      'Kurunegala',
+      'Kuliyapitiya',
+      'Pannala',
+      'Wariyapola',
+      'Nikaweratiya',
+      'Mawathagama'
+    ],
+    Puttalam: [
+      'Puttalam',
+      'Chilaw',
+      'Nattandiya',
+      'Wennappuwa',
+      'Anamaduwa',
+      'Kalpitiya'
+    ],
+
+    Badulla: [
+      'Badulla',
+      'Ella',
+      'Bandarawela',
+      'Welimada',
+      'Hali-Ela',
+      'Passara'
+    ],
+    Monaragala: [
+      'Monaragala',
+      'Wellawaya',
+      'Bibile',
+      'Buttala',
+      'Kataragama Town',
+      'Madulla'
+    ],
+
+    Ratnapura: [
+      'Ratnapura',
+      'Balangoda',
+      'Embilipitiya',
+      'Kahawatta',
+      'Pelmadulla',
+      'Kuruwita'
+    ],
+    Kegalle: [
+      'Kegalle',
+      'Mawanella',
+      'Warakapola',
+      'Rambukkana',
+      'Galigamuwa',
+      'Ruwanwella'
+    ],
   };
-
-
 
   // all mock data
   private allAccommodations: Accommodation[] = ACCOMMODATIONS;
