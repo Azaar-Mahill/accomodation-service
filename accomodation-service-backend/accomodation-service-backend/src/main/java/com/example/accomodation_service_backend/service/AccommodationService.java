@@ -572,12 +572,16 @@ public class AccommodationService {
             Map<Integer, Integer> bookingsByMonth = new HashMap<>();
             Map<Integer, BigDecimal> revenueByMonth = new HashMap<>();
             Map<Integer, BigDecimal> averageDailyRate = new HashMap<>();
+            Map<Integer, BigDecimal> revenuePerAvailableRoom = new HashMap<>();
 
             for (int month = 1; month <= 12; month++) {
 
                 int totalMonthBookings = 0;
                 BigDecimal totalMonthRevenue = BigDecimal.ZERO;
+                int totalNumberOfRooms = 0;
+                List<String> roomSks = new ArrayList<>();
                 BigDecimal averageDailyRatePerMonth = BigDecimal.ZERO;
+                BigDecimal revenuePerAvailableRoomPerMonth = BigDecimal.ZERO;
 
                 for (BookAccomodation booking : listOfBookings) {
 
@@ -594,11 +598,16 @@ public class AccommodationService {
 
                         totalMonthRevenue = totalMonthRevenue.add(amount);
                     }
+
+                    if(!roomSks.contains(booking.getRoomSk())){
+                        roomSks.add(booking.getRoomSk());
+                        totalNumberOfRooms = totalNumberOfRooms + 1;
+                    }
                 }
 
-                if (totalMonthBookings > 0) {
+                if (totalNumberOfRooms > 0) {
                     averageDailyRatePerMonth = totalMonthRevenue.divide(
-                            BigDecimal.valueOf(totalMonthBookings),
+                            BigDecimal.valueOf(totalNumberOfRooms),
                             2,                              // scale (2 decimal places)
                             RoundingMode.HALF_UP            // rounding mode
                     );
@@ -606,15 +615,27 @@ public class AccommodationService {
                     averageDailyRatePerMonth = BigDecimal.ZERO;
                 }
 
+                if (totalMonthBookings > 0) {
+                    revenuePerAvailableRoomPerMonth = totalMonthRevenue.divide(
+                            BigDecimal.valueOf(totalMonthBookings),
+                            2,                              // scale (2 decimal places)
+                            RoundingMode.HALF_UP            // rounding mode
+                    );
+                } else {
+                    revenuePerAvailableRoomPerMonth = BigDecimal.ZERO;
+                }
+
                 bookingsByMonth.put(month, totalMonthBookings);
                 revenueByMonth.put(month, totalMonthRevenue);   // <-- MUST be added
                 averageDailyRate.put(month, averageDailyRatePerMonth);
+                revenuePerAvailableRoom.put(month, revenuePerAvailableRoomPerMonth);
             }
 
 
             accomodationKPIDTO.setBookingsByMonth(bookingsByMonth);
             accomodationKPIDTO.setRevenueByMonth(revenueByMonth);
             accomodationKPIDTO.setAverageDailyRate(averageDailyRate);
+            accomodationKPIDTO.setRevenuePerAvailableRoom(revenuePerAvailableRoom);
 
             listOfAccomodationKPIDTO.add(accomodationKPIDTO);
 

@@ -133,6 +133,21 @@ export class AdminComponent {
       y: {
         beginAtZero: true,
         max: 100000,
+        title: { display: true, text: 'rupees per room' }
+      }
+    }
+  };
+
+  revenuePerAvailableRoomBarOptions: ChartConfiguration['options'] = {
+    responsive: true,
+    plugins: {
+      legend: { display: false }
+    },
+    scales: {
+      x: {},
+      y: {
+        beginAtZero: true,
+        max: 100000,
         title: { display: true, text: 'rupees per booking' }
       }
     }
@@ -171,22 +186,7 @@ export class AdminComponent {
     };
   }
 
-  getAverageDailyRateChartData(a: any): ChartConfiguration['data'] {
-    const temps: number[] = this.monthLabels.map((_, idx) => {
-      // avgTempByMonthC has keys 1..12
-      return a?.averageDailyRate?.[idx + 1] ?? 0;
-    });
-
-    return {
-      labels: this.monthLabels,
-      datasets: [
-        {
-          data: temps,
-          label: 'rupees per booking'
-        }
-      ]
-    };
-  }
+  
 
   getRevenuesChartData(a: any): ChartConfiguration['data'] {
     const temps: number[] = this.monthLabels.map((_, idx) => {
@@ -200,6 +200,40 @@ export class AdminComponent {
         {
           data: temps,
           label: 'Monthly revenue'
+        }
+      ]
+    };
+  }
+
+  getAverageDailyRateChartData(a: any): ChartConfiguration['data'] {
+    const temps: number[] = this.monthLabels.map((_, idx) => {
+      // avgTempByMonthC has keys 1..12
+      return a?.averageDailyRate?.[idx + 1] ?? 0;
+    });
+
+    return {
+      labels: this.monthLabels,
+      datasets: [
+        {
+          data: temps,
+          label: 'rupees per room'
+        }
+      ]
+    };
+  }
+
+  revenuePerAvailableRoomChartData(a: any): ChartConfiguration['data'] {
+    const temps: number[] = this.monthLabels.map((_, idx) => {
+      // avgTempByMonthC has keys 1..12
+      return a?.revenuePerAvailableRoom?.[idx + 1] ?? 0;
+    });
+
+    return {
+      labels: this.monthLabels,
+      datasets: [
+        {
+          data: temps,
+          label: 'rupees per booking'
         }
       ]
     };
