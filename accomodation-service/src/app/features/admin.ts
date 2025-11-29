@@ -50,9 +50,11 @@ export class AdminComponent {
   private allAccommodations: Accommodation[] = ACCOMMODATIONS;
 
   // declare with definite assignment; initialize in constructor
-  tab3Form!: FormGroup;
+  tab4Form!: FormGroup;
+  tab5Form!: FormGroup;
 
-  tab3Results = signal<any[]>([]);
+  tab4Results = signal<any[]>([]);
+  tab5Results = signal<any[]>([]);
 
   private dialog = inject(MatDialog);
 
@@ -105,24 +107,52 @@ export class AdminComponent {
   ) {
 
 
-    this.tab3Form = this.fb.group({
+    this.tab4Form = this.fb.group({
+      accomodationType: [null as AccommodationType | null]
+    });
+
+    this.tab5Form = this.fb.group({
       accomodationType: [null as AccommodationType | null]
     });
   }
 
-    // Search for Tab 3 (Type of Accommodation)
-  searchTab3(): void {
+  searchTab4(): void {
 
-    const { accomodationType } = this.tab3Form.value;
+    const { accomodationType } = this.tab4Form.value;
 
     if( accomodationType != null ){
       this.svc.accomodationTypeInformation({
         accomodationType: accomodationType ?? null
       }).subscribe({
-        next: (list) => this.tab3Results.set(list),
+        next: (list) => this.tab4Results.set(list),
         error: (err) => {
           console.error('accomodationType selection search failed', err);
-          this.tab3Results.set([]);
+          this.tab4Results.set([]);
+        }
+      });
+    }else{
+      //open a popup asking to select values in drop downs
+      this.dialog.open(InfoDialogComponent, {
+        data: {
+          title: 'Selections required',
+          message: 'Please select accomodationType before searching.'
+        }
+      });
+    }
+  }
+
+  searchTab5(): void {
+
+    const { accomodationType } = this.tab5Form.value;
+
+    if( accomodationType != null ){
+      this.svc.accomodationTypeInformation({
+        accomodationType: accomodationType ?? null
+      }).subscribe({
+        next: (list) => this.tab5Results.set(list),
+        error: (err) => {
+          console.error('accomodationType selection search failed', err);
+          this.tab5Results.set([]);
         }
       });
     }else{

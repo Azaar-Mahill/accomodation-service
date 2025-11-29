@@ -15,7 +15,7 @@
 
 <!-- TAB4 -->
   <mat-tab label="KPIs">
-    <form class="panel" [formGroup]="tab3Form">
+    <form class="panel" [formGroup]="tab4Form">
       <div class="content-layout">
         <div class="filters">
           <mat-form-field appearance="outline">
@@ -25,11 +25,11 @@
             </mat-select>
           </mat-form-field>
 
-          <button mat-raised-button color="primary" type="button" (click)="searchTab3()">Search</button>
+          <button mat-raised-button color="primary" type="button" (click)="searchTab4()">Search</button>
         </div>
 
-        <div class="results3">
-          <mat-card class="accommodation-card" *ngFor="let a of tab3Results()">
+        <div class="results4">
+          <mat-card class="accommodation-card" *ngFor="let a of tab4Results()">
             <mat-card-title>Name of Accommodation: {{ a.accommodationName }}</mat-card-title>
             <mat-card-content>
               <p><strong>Environment:</strong> {{ a.environment }}</p>
@@ -64,7 +64,7 @@
 
 <!-- TAB5 -->
   <mat-tab label="Forecasting">
-    <form class="panel" [formGroup]="tab3Form">
+    <form class="panel" [formGroup]="tab5Form">
       <div class="content-layout">
         <div class="filters">
           <mat-form-field appearance="outline">
@@ -74,11 +74,11 @@
             </mat-select>
           </mat-form-field>
 
-          <button mat-raised-button color="primary" type="button" (click)="searchTab3()">Search</button>
+          <button mat-raised-button color="primary" type="button" (click)="searchTab5()">Search</button>
         </div>
 
-        <div class="results3">
-          <mat-card class="accommodation-card" *ngFor="let a of tab3Results()">
+        <div class="results5">
+          <mat-card class="accommodation-card" *ngFor="let a of tab5Results()">
             <mat-card-title>Name of Accommodation: {{ a.accommodationName }}</mat-card-title>
             <mat-card-content>
               <p><strong>Environment:</strong> {{ a.environment }}</p>
