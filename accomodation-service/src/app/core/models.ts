@@ -60,7 +60,7 @@ export interface Accommodation5 {
   district: string;
   environment: EnvironmentType;
   accommodationType: AccommodationType;
-  avgTempByMonthC: Record<number, number>;       // 1..12
+  bookingsByMonth: Record<number, number>;       // 1..12
   avgPrecipByMonthMm: Record<number, number>;    // 1..12
   bookingUrl?: string;
 }

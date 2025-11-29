@@ -6,11 +6,6 @@
   </button>
 </div>
 
-<div style="padding: 16px">
-  <h2>Admin page</h2>
-  <p>Only admins can see this page.</p>
-</div>
-
 <mat-tab-group>
 
 <!-- TAB4 -->
@@ -69,13 +64,24 @@
             <!-- 🔹 One row with 2 charts horizontally -->
             <mat-card-content class="chart-row">
               <div class="chart-box">
-                <p><strong>Average temperature graph</strong></p>
+                <p><strong>Booking graph</strong></p>
                 <div class="chart-container">
                   <canvas
                     baseChart
                     [type]="'bar'"
-                    [data]="getTempChartData(a)"
-                    [options]="temperatureBarOptions">
+                    [data]="getBookingsChartData(a)"
+                    [options]="bookingsBarOptions">
+                  </canvas>
+                </div>
+              </div>
+              <div class="chart-box">
+                <p><strong>Booking graph</strong></p>
+                <div class="chart-container">
+                  <canvas
+                    baseChart
+                    [type]="'bar'"
+                    [data]="getBookingsChartData(a)"
+                    [options]="bookingsBarOptions">
                   </canvas>
                 </div>
               </div>

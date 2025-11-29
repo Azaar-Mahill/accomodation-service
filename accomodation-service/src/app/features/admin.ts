@@ -92,7 +92,22 @@ export class AdminComponent {
     'Jul','Aug','Sep','Oct','Nov','Dec'
   ];
 
-  // Chart options used in the template
+
+  bookingsBarOptions: ChartConfiguration['options'] = {
+    responsive: true,
+    plugins: {
+      legend: { display: false }
+    },
+    scales: {
+      x: {},
+      y: {
+        beginAtZero: true,
+        max: 20,
+        title: { display: true, text: '°C' }
+      }
+    }
+  };
+
   temperatureBarOptions: ChartConfiguration['options'] = {
     responsive: true,
     plugins: {
@@ -109,7 +124,23 @@ export class AdminComponent {
   };
 
 
-  // Build chart data for one accommodation
+  getBookingsChartData(a: any): ChartConfiguration['data'] {
+    const temps: number[] = this.monthLabels.map((_, idx) => {
+      // avgTempByMonthC has keys 1..12
+      return a?.bookingsByMonth?.[idx + 1] ?? 0;
+    });
+
+    return {
+      labels: this.monthLabels,
+      datasets: [
+        {
+          data: temps,
+          label: 'Monthly bookings'
+        }
+      ]
+    };
+  }
+
   getTempChartData(a: any): ChartConfiguration['data'] {
     const temps: number[] = this.monthLabels.map((_, idx) => {
       // avgTempByMonthC has keys 1..12
