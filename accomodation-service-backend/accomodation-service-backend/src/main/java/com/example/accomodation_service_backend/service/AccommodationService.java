@@ -1,9 +1,6 @@
 package com.example.accomodation_service_backend.service;
 
-import com.example.accomodation_service_backend.dto.AccomodationByIdDTO;
-import com.example.accomodation_service_backend.dto.AccomodationDTO;
-import com.example.accomodation_service_backend.dto.AccomodationTypeDTO;
-import com.example.accomodation_service_backend.dto.AccomodationWeatherDTO;
+import com.example.accomodation_service_backend.dto.*;
 import com.example.accomodation_service_backend.model.*;
 import com.example.accomodation_service_backend.repo.*;
 import org.springframework.stereotype.Service;
@@ -13,6 +10,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.time.LocalDate;
 
 @Service
 public class AccommodationService {
@@ -23,6 +21,10 @@ public class AccommodationService {
     private final SafetyOfAreaOfAccommodationRepository safetyOfAreaOfAccommodationRepository;
 
     private final WeatherOfAreaOfAccommodationRepository weatherOfAreaOfAccommodationRepository;
+
+    private final BookAccomodationRepository bookAccomodationRepository;
+
+    private final RoomRepository roomRepository;
 
     private final BigDecimal weightOfAccidents = BigDecimal.valueOf(2);
 
@@ -35,13 +37,17 @@ public class AccommodationService {
             AccommodationLocationRepository accommodationLocationRepository,
             AccommodationRepository accommodationRepository,
             SafetyOfAreaOfAccommodationRepository safetyOfAreaOfAccommodationRepository,
-            WeatherOfAreaOfAccommodationRepository weatherOfAreaOfAccommodationRepository
+            WeatherOfAreaOfAccommodationRepository weatherOfAreaOfAccommodationRepository,
+            RoomRepository roomRepository,
+            BookAccomodationRepository bookAccomodationRepository
     ) {
         this.accommodationTypeRepository = accommodationTypeRepository;
         this.accommodationLocationRepository = accommodationLocationRepository;
         this.accommodationRepository = accommodationRepository;
         this.safetyOfAreaOfAccommodationRepository = safetyOfAreaOfAccommodationRepository;
         this.weatherOfAreaOfAccommodationRepository = weatherOfAreaOfAccommodationRepository;
+        this.roomRepository = roomRepository;
+        this.bookAccomodationRepository = bookAccomodationRepository;
     }
 
     public List<AccomodationDTO> search(Integer month, String environmentType, String accomodationType) {
@@ -522,9 +528,84 @@ public class AccommodationService {
 
     }
 
-    public void findKPIInformation(String province, Boolean useDistrict,String district) {
+    public List<AccomodationKPIDTO> findKPIInformation(String province, String useDistrict,String district) {
+
+        List<String> accomodationLocationSks = new ArrayList<>();
+
+        if(useDistrict == "true"){
+            accomodationLocationSks = accommodationLocationRepository.findAccommodationLocationSksByProvinceAndDistrict(province, district);
+        }else{
+            accomodationLocationSks = accommodationLocationRepository.findAccommodationLocationSksByProvince(province);
+        }
+
+        List<Accommodation> listOfFilteredAccomodationsUsingAccomodationLocationSk = new ArrayList<>();
+
+        for(String accomodationLocationSk:accomodationLocationSks){
+            listOfFilteredAccomodationsUsingAccomodationLocationSk.addAll(accommodationRepository.getAccomodationsFromAccommodationLocationSk(accomodationLocationSk));
+        }
+
+        List<AccomodationKPIDTO> listOfAccomodationKPIDTO = new ArrayList<>();
+        int currentMonthNumber = LocalDate.now().getMonthValue();
+
+        for(Accommodation accomodationsUsingAccomodationLocationSk:listOfFilteredAccomodationsUsingAccomodationLocationSk){
+            AccomodationKPIDTO accomodationKPIDTO = new AccomodationKPIDTO();
+            accomodationKPIDTO.setId(accomodationsUsingAccomodationLocationSk.getAccommodationSk());
+            accomodationKPIDTO.setAccommodationName(accomodationsUsingAccomodationLocationSk.getAccommodationName());
+
+            String provinceForAddress = accommodationLocationRepository.getProvince(accomodationsUsingAccomodationLocationSk.getAccommodationLocationSk());
+            String districtForAddress = accommodationLocationRepository.getDistrict(accomodationsUsingAccomodationLocationSk.getAccommodationLocationSk());
+            String cityForAddress = accommodationLocationRepository.getCity(accomodationsUsingAccomodationLocationSk.getAccommodationLocationSk());
+            String address = String.format("%s, %s, %s province", cityForAddress, districtForAddress, provinceForAddress);
+
+            accomodationKPIDTO.setAccommodationAddress(address);
+            accomodationKPIDTO.setEnvironment(accommodationLocationRepository.getEnvironment(accomodationsUsingAccomodationLocationSk.getAccommodationLocationSk()));
+
+            List<String> listOfFilteredRoomSksUsingAccomodationSk = new ArrayList<>();
+            listOfFilteredRoomSksUsingAccomodationSk = roomRepository.getRoomsUsingAccomodationSk(accomodationsUsingAccomodationLocationSk.getAccommodationSk());
+
+            List<BookAccomodation> listOfBookings = new ArrayList<>();
+            for(String filteredRoomSksUsingAccomodationSk: listOfFilteredRoomSksUsingAccomodationSk){
+                listOfBookings.addAll(bookAccomodationRepository.getBookingsUsingRoomSk(filteredRoomSksUsingAccomodationSk));
+            }
+
+            Map<Integer, Integer> bookingsByMonth = new HashMap<>();
+            Map<Integer, BigDecimal> revenueByMonth = new HashMap<>();
+
+            for (int month = 1; month <= 12; month++) {
+
+                int totalMonthBookings = 0;
+                BigDecimal totalMonthRevenue = BigDecimal.ZERO;
+
+                for (BookAccomodation booking : listOfBookings) {
+
+                    int bookingMonth = Integer.parseInt(booking.getCheckinDateSk().substring(5, 7));
+
+                    if (month == bookingMonth) {
+
+                        totalMonthBookings++;
+
+                        // SAFE handling of null BigDecimal
+                        BigDecimal amount = booking.getTotalAmount() == null
+                                ? BigDecimal.ZERO
+                                : booking.getTotalAmount();
+
+                        totalMonthRevenue = totalMonthRevenue.add(amount);
+                    }
+                }
+
+                bookingsByMonth.put(month, totalMonthBookings);
+                revenueByMonth.put(month, totalMonthRevenue);   // <-- MUST be added
+            }
 
 
+            accomodationKPIDTO.setBookingsByMonth(bookingsByMonth);
+            accomodationKPIDTO.setRevenueByMonth(revenueByMonth);
+
+            listOfAccomodationKPIDTO.add(accomodationKPIDTO);
+
+        }
+
+        return listOfAccomodationKPIDTO;
 
     }
 }

@@ -1,9 +1,6 @@
 package com.example.accomodation_service_backend.controller;
 
-import com.example.accomodation_service_backend.dto.AccomodationByIdDTO;
-import com.example.accomodation_service_backend.dto.AccomodationDTO;
-import com.example.accomodation_service_backend.dto.AccomodationTypeDTO;
-import com.example.accomodation_service_backend.dto.AccomodationWeatherDTO;
+import com.example.accomodation_service_backend.dto.*;
 import com.example.accomodation_service_backend.model.Accommodation;
 import com.example.accomodation_service_backend.service.AccommodationService;
 import org.springframework.web.bind.annotation.*;
@@ -53,12 +50,12 @@ public class AccommodationController {
     }
 
     @GetMapping("/KPIInformation")
-    public void KPIInformation(
+    public List<AccomodationKPIDTO> KPIInformation(
             @RequestParam(required = false) String province,
-            @RequestParam(required = false) Boolean useDistrict,
+            @RequestParam(required = false) String useDistrict,
             @RequestParam(required = false) String district
     ) {
-        svc.findKPIInformation(province, useDistrict,district);
+        return svc.findKPIInformation(province, useDistrict,district);
     }
 }
 
