@@ -19,6 +19,7 @@ import { ACCOMMODATIONS } from '../core/mock-accommodations';
 import { Accommodation } from '../core/models';
 import { InfoDialogComponent } from './info-dialog.component';
 import { AuthService } from '../core/auth.service';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 
 @Component({
   selector: 'app-admin',
@@ -34,6 +35,7 @@ import { AuthService } from '../core/auth.service';
     MatDialogModule,
     MatCardModule,
     BaseChartDirective,          // for baseChart on <canvas>
+    MatCheckboxModule, 
   ],
   templateUrl: './admin.html',
   styleUrls: ['./admin.scss'],
@@ -46,7 +48,7 @@ export class AdminComponent {
   environmentTypes: EnvironmentType[] = ['Any','Beach','Hill Country','City','Wildlife','Cultural'];
   accomodationTypes: AccommodationType[] = ['Any','Hotel','Resort','Villa','Guest House','Hostel'];
 
-  provinces: string[] = [
+    provinces: string[] = [
     'Western',
     'Central',
     'Southern',
@@ -57,6 +59,20 @@ export class AdminComponent {
     'Uva',
     'Sabaragamuwa'
   ];
+
+  // ✅ districts by province (Sri Lanka)
+  districtsByProvince: { [province: string]: string[] } = {
+    Western: ['Colombo', 'Gampaha', 'Kalutara'],
+    Central: ['Kandy', 'Matale', 'Nuwara Eliya'],
+    Southern: ['Galle', 'Matara', 'Hambantota'],
+    Northern: ['Jaffna', 'Kilinochchi', 'Mannar', 'Mullaitivu', 'Vavuniya'],
+    Eastern: ['Trincomalee', 'Batticaloa', 'Ampara'],
+    'North Western': ['Kurunegala', 'Puttalam'],
+    'North Central': ['Anuradhapura', 'Polonnaruwa'],
+    Uva: ['Badulla', 'Monaragala'],
+    Sabaragamuwa: ['Ratnapura', 'Kegalle'],
+  };
+
 
   // all mock data
   private allAccommodations: Accommodation[] = ACCOMMODATIONS;
@@ -120,7 +136,9 @@ export class AdminComponent {
 
 
     this.tab4Form = this.fb.group({
-      province: [null as string | null]
+      province: [null as string | null],
+      useDistrict: [false],
+      district: [null as string | null],
     });
 
     this.tab5Form = this.fb.group({
@@ -128,30 +146,31 @@ export class AdminComponent {
     });
   }
 
-  searchTab4(): void {
-    const { province } = this.tab4Form.value;
+    searchTab4(): void {
+    const { province, useDistrict, district } = this.tab4Form.value;
 
-    if (province) {
-      // TODO: call your KPI endpoint here. For now I'll just log:
-      console.log('Searching KPIs for province:', province);
-
-      // Example if you later add a KPI API:
-      // this.svc.kpiByProvince({ province }).subscribe({
-      //   next: list => this.tab4Results.set(list),
-      //   error: err => {
-      //     console.error('province KPI search failed', err);
-      //     this.tab4Results.set([]);
-      //   }
-      // });
-    } else {
+    if (!province) {
       this.dialog.open(InfoDialogComponent, {
         data: {
           title: 'Selections required',
-          message: 'Please select a province before searching.'
-        }
+          message: 'Please select a province before searching.',
+        },
       });
+      return;
     }
+
+    const payload: any = { province };
+
+    if (useDistrict && district) {
+      payload.district = district;
+    }
+
+    console.log('KPI search payload:', payload);
+
+    // call your KPI service here:
+    // this.svc.kpiSearch(payload).subscribe(...)
   }
+
 
   searchTab5(): void {
 
@@ -177,6 +196,15 @@ export class AdminComponent {
       });
     }
   }
+
+    getDistrictsForSelectedProvince(): string[] {
+    const province = this.tab4Form.get('province')?.value as string | null;
+    if (!province) {
+      return [];
+    }
+    return this.districtsByProvince[province] ?? [];
+  }
+
 
   logout(): void {
     this.auth.logout();               // clear user info
