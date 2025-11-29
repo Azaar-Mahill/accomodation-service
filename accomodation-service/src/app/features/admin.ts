@@ -46,6 +46,18 @@ export class AdminComponent {
   environmentTypes: EnvironmentType[] = ['Any','Beach','Hill Country','City','Wildlife','Cultural'];
   accomodationTypes: AccommodationType[] = ['Any','Hotel','Resort','Villa','Guest House','Hostel'];
 
+  provinces: string[] = [
+    'Western',
+    'Central',
+    'Southern',
+    'Northern',
+    'Eastern',
+    'North Western',
+    'North Central',
+    'Uva',
+    'Sabaragamuwa'
+  ];
+
   // all mock data
   private allAccommodations: Accommodation[] = ACCOMMODATIONS;
 
@@ -108,7 +120,7 @@ export class AdminComponent {
 
 
     this.tab4Form = this.fb.group({
-      accomodationType: [null as AccommodationType | null]
+      province: [null as string | null]
     });
 
     this.tab5Form = this.fb.group({
@@ -117,25 +129,25 @@ export class AdminComponent {
   }
 
   searchTab4(): void {
+    const { province } = this.tab4Form.value;
 
-    const { accomodationType } = this.tab4Form.value;
+    if (province) {
+      // TODO: call your KPI endpoint here. For now I'll just log:
+      console.log('Searching KPIs for province:', province);
 
-    if( accomodationType != null ){
-      this.svc.accomodationTypeInformation({
-        accomodationType: accomodationType ?? null
-      }).subscribe({
-        next: (list) => this.tab4Results.set(list),
-        error: (err) => {
-          console.error('accomodationType selection search failed', err);
-          this.tab4Results.set([]);
-        }
-      });
-    }else{
-      //open a popup asking to select values in drop downs
+      // Example if you later add a KPI API:
+      // this.svc.kpiByProvince({ province }).subscribe({
+      //   next: list => this.tab4Results.set(list),
+      //   error: err => {
+      //     console.error('province KPI search failed', err);
+      //     this.tab4Results.set([]);
+      //   }
+      // });
+    } else {
       this.dialog.open(InfoDialogComponent, {
         data: {
           title: 'Selections required',
-          message: 'Please select accomodationType before searching.'
+          message: 'Please select a province before searching.'
         }
       });
     }

@@ -15,52 +15,26 @@
 
 <!-- TAB4 -->
   <mat-tab label="KPIs">
-    <form class="panel" [formGroup]="tab4Form">
-      <div class="content-layout">
-        <div class="filters">
-          <mat-form-field appearance="outline">
-            <mat-label>Type of Accommodation</mat-label>
-            <mat-select formControlName="accomodationType">
-              <mat-option *ngFor="let t of accomodationTypes" [value]="t">{{ t }}</mat-option>
-            </mat-select>
-          </mat-form-field>
+  <form class="panel" [formGroup]="tab4Form">
+    <div class="content-layout">
+      <div class="filters">
+        <mat-form-field appearance="outline">
+          <mat-label>Name of Province</mat-label>
+          <mat-select formControlName="province">
+            <mat-option *ngFor="let p of provinces" [value]="p">
+              {{ p }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
 
-          <button mat-raised-button color="primary" type="button" (click)="searchTab4()">Search</button>
-        </div>
-
-        <div class="results4">
-          <mat-card class="accommodation-card" *ngFor="let a of tab4Results()">
-            <mat-card-title>Name of Accommodation: {{ a.accommodationName }}</mat-card-title>
-            <mat-card-content>
-              <p><strong>Environment:</strong> {{ a.environment }}</p>
-            </mat-card-content>
-            <mat-card-content>
-              <p><strong>Address:</strong> {{ a.accommodationAddress }}</p>
-            </mat-card-content>
-
-            <!-- 🔹 One row with 2 charts horizontally -->
-            <mat-card-content class="chart-row">
-              <div class="chart-box">
-                <p><strong>Average temperature graph</strong></p>
-                <div class="chart-container">
-                  <canvas
-                    baseChart
-                    [type]="'bar'"
-                    [data]="getTempChartData(a)"
-                    [options]="temperatureBarOptions">
-                  </canvas>
-                </div>
-              </div>
-            </mat-card-content>
-
-            <mat-card-actions>
-              <a mat-button color="accent" [routerLink]="['/book', a.id]">Click to book</a>
-            </mat-card-actions>
-          </mat-card>
-        </div>
+        <button mat-raised-button color="primary" type="button" (click)="searchTab4()">
+          Search
+        </button>
       </div>
-    </form>
-  </mat-tab>
+    </div>
+  </form>
+</mat-tab>
+
 
 <!-- TAB5 -->
   <mat-tab label="Forecasting">
