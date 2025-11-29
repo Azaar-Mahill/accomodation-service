@@ -50,12 +50,8 @@ export class AdminComponent {
   private allAccommodations: Accommodation[] = ACCOMMODATIONS;
 
   // declare with definite assignment; initialize in constructor
-  tab1Form!: FormGroup;
-  tab2Form!: FormGroup;
   tab3Form!: FormGroup;
 
-  tab1Results = signal<any[]>([]);
-  tab2Results = signal<any[]>([]);
   tab3Results = signal<any[]>([]);
 
   private dialog = inject(MatDialog);
