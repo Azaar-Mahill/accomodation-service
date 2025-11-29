@@ -51,47 +51,7 @@
                   </canvas>
                 </div>
               </div>
-
-              <div class="chart-box">
-                <p><strong>Average precipitation graph</strong></p>
-                <div class="chart-container">
-                  <canvas
-                    baseChart
-                    [type]="'bar'"
-                    [data]="getPrecipitationChartData(a)"
-                    [options]="precipitationBarOptions">
-                  </canvas>
-                </div>
-              </div>
             </mat-card-content>
-
-            <mat-card-content class="chart-row">
-              <div class="chart-box">
-                <p><strong>Average crime rate graph</strong></p>
-                <div class="chart-container">
-                  <canvas
-                    baseChart
-                    [type]="'bar'"
-                    [data]="getCrimeRateChartData(a)"
-                    [options]="CrimeRateBarOptions">
-                  </canvas>
-                </div>
-              </div>
-
-              <div class="chart-box">
-                <p><strong>Average accident rate graph</strong></p>
-                <div class="chart-container">
-                  <canvas
-                    baseChart
-                    [type]="'bar'"
-                    [data]="getAccidentRateChartData(a)"
-                    [options]="AccidentRateBarOptions">
-                  </canvas>
-                </div>
-              </div>
-            </mat-card-content>
-
-
 
             <mat-card-actions>
               <a mat-button color="accent" [routerLink]="['/book', a.id]">Click to book</a>
@@ -103,7 +63,7 @@
   </mat-tab>
 
 <!-- TAB5 -->
-  <mat-tab label="Foreasting">
+  <mat-tab label="Forecasting">
     <form class="panel" [formGroup]="tab3Form">
       <div class="content-layout">
         <div class="filters">
@@ -140,47 +100,7 @@
                   </canvas>
                 </div>
               </div>
-
-              <div class="chart-box">
-                <p><strong>Average precipitation graph</strong></p>
-                <div class="chart-container">
-                  <canvas
-                    baseChart
-                    [type]="'bar'"
-                    [data]="getPrecipitationChartData(a)"
-                    [options]="precipitationBarOptions">
-                  </canvas>
-                </div>
-              </div>
             </mat-card-content>
-
-            <mat-card-content class="chart-row">
-              <div class="chart-box">
-                <p><strong>Average crime rate graph</strong></p>
-                <div class="chart-container">
-                  <canvas
-                    baseChart
-                    [type]="'bar'"
-                    [data]="getCrimeRateChartData(a)"
-                    [options]="CrimeRateBarOptions">
-                  </canvas>
-                </div>
-              </div>
-
-              <div class="chart-box">
-                <p><strong>Average accident rate graph</strong></p>
-                <div class="chart-container">
-                  <canvas
-                    baseChart
-                    [type]="'bar'"
-                    [data]="getAccidentRateChartData(a)"
-                    [options]="AccidentRateBarOptions">
-                  </canvas>
-                </div>
-              </div>
-            </mat-card-content>
-
-
 
             <mat-card-actions>
               <a mat-button color="accent" [routerLink]="['/book', a.id]">Click to book</a>

@@ -82,50 +82,6 @@ export class AdminComponent {
     }
   };
 
-  precipitationBarOptions: ChartConfiguration['options'] = {
-    responsive: true,
-    plugins: {
-      legend: { display: false }
-    },
-    scales: {
-      x: {},
-      y: {
-        beginAtZero: true,
-        max: 200,
-        title: { display: true, text: 'mm' }
-      }
-    }
-  };
-
-  CrimeRateBarOptions: ChartConfiguration['options'] = {
-    responsive: true,
-    plugins: {
-      legend: { display: false }
-    },
-    scales: {
-      x: {},
-      y: {
-        beginAtZero: true,
-        max: 1,
-        title: { display: true }
-      }
-    }
-  };
-
-  AccidentRateBarOptions: ChartConfiguration['options'] = {
-    responsive: true,
-    plugins: {
-      legend: { display: false }
-    },
-    scales: {
-      x: {},
-      y: {
-        beginAtZero: true,
-        max: 1,
-        title: { display: true }
-      }
-    }
-  };
 
   // Build chart data for one accommodation
   getTempChartData(a: any): ChartConfiguration['data'] {
@@ -145,141 +101,17 @@ export class AdminComponent {
     };
   }
 
-  getPrecipitationChartData(a: any): ChartConfiguration['data'] {
-    const temps: number[] = this.monthLabels.map((_, idx1) => {
-      return a?.avgPrecipByMonthMm?.[idx1 + 1] ?? 0;
-    });
-
-    return {
-      labels: this.monthLabels,
-      datasets: [
-        {
-          data: temps,
-          label: 'Avg Precipitation (mm)'
-        }
-      ]
-    };
-  }
-
-  getCrimeRateChartData(a: any): ChartConfiguration['data'] {
-    const temps: number[] = this.monthLabels.map((_, idx2) => {
-      return a?.avgCrimeRateByMonth?.[idx2 + 1] ?? 0;
-    });
-
-    return {
-      labels: this.monthLabels,
-      datasets: [
-        {
-          data: temps,
-          label: 'Avg Crime Rate Per Month'
-        }
-      ]
-    };
-  }
-
-  getAccidentRateChartData(a: any): ChartConfiguration['data'] {
-    const temps: number[] = this.monthLabels.map((_, idx3) => {
-      return a?.avgAccidentRateByMonth?.[idx3 + 1] ?? 0;
-    });
-
-    return {
-      labels: this.monthLabels,
-      datasets: [
-        {
-          data: temps,
-          label: 'Avg Accident Rate Per Month'
-        }
-      ]
-    };
-  }
-
-
   constructor(
     private fb: FormBuilder, 
     private svc: AccommodationService,
     private auth: AuthService, 
     private router: Router  
   ) {
-    this.tab1Form = this.fb.group({
-      month: [null as number | null],
-      environmentType: [null as EnvironmentType | null],
-      accomodationType: [null as AccommodationType | null],
-    });
 
-    this.tab2Form = this.fb.group({
-      month: [null as number | null],
-      environmentType: [null as EnvironmentType | null],
-      accomodationType: [null as AccommodationType | null],
-    });
 
     this.tab3Form = this.fb.group({
       accomodationType: [null as AccommodationType | null]
     });
-  }
-
-  searchTab1() {
-    const { month, environmentType, accomodationType } = this.tab1Form.value;
-
-    if( month != null && environmentType != null && accomodationType != null){
-      this.svc.searchBasicHttp({
-        month: month ?? null,
-        environmentType: environmentType ?? null,      // map -> environment
-        accomodationType: accomodationType ?? null,            // map -> type
-      }).subscribe({
-        next: (list) => this.tab1Results.set(list),
-        error: (err) => {
-          console.error('Accommodation selection search failed', err);
-          this.tab1Results.set([]);
-        }
-      });
-    }else{
-      //open a popup asking to select values in drop downs
-      this.dialog.open(InfoDialogComponent, {
-        data: {
-          title: 'Selections required',
-          message: 'Please select Month, Environment, and Accommodation Type before searching.'
-        }
-      });
-    }
-
-    
-  }
-
-  searchTab2() {
-    const { month } = this.tab2Form.value;
-
-    if( month != null ){
-      this.svc.searchBasedOnWeather({
-        month: month ?? null
-      }).subscribe({
-        next: (list) => this.tab2Results.set(list),
-        error: (err) => {
-          console.error('Month selection search failed', err);
-          this.tab2Results.set([]);
-        }
-      });
-    }else{
-      //open a popup asking to select values in drop downs
-      this.dialog.open(InfoDialogComponent, {
-        data: {
-          title: 'Selections required',
-          message: 'Please select Month before searching.'
-        }
-      });
-    }
-  }
-
-  getWeatherClass(status: string | undefined): string {
-    switch (status) {
-      case 'Super':
-        return 'weather-super';
-      case 'Normal':
-        return 'weather-normal';
-      case 'Bad':
-        return 'weather-bad';
-      default:
-        return '';
-    }
   }
 
     // Search for Tab 3 (Type of Accommodation)
