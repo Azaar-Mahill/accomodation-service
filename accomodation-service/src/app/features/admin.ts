@@ -382,7 +382,7 @@ export class AdminComponent {
     }
   };
 
-  temperatureBarOptions: ChartConfiguration['options'] = {
+  forecastBarOptions: ChartConfiguration['options'] = {
     responsive: true,
     plugins: {
       legend: { display: false }
@@ -391,12 +391,11 @@ export class AdminComponent {
       x: {},
       y: {
         beginAtZero: true,
-        max: 60,
-        title: { display: true, text: '°C' }
+        max: 30,
+        title: { display: true, text: 'Bookings' }
       }
     }
   };
-
 
   getBookingsChartData(a: any): ChartConfiguration['data'] {
     const temps: number[] = this.monthLabels.map((_, idx) => {
@@ -483,18 +482,20 @@ export class AdminComponent {
     };
   }
 
-  getTempChartData(a: any): ChartConfiguration['data'] {
-    const temps: number[] = this.monthLabels.map((_, idx) => {
-      // avgTempByMonthC has keys 1..12
-      return a?.avgTempByMonthC?.[idx + 1] ?? 0;
-    });
+  getForecastChartData(a: any): ChartConfiguration['data'] {
+    const entries = Object.entries(a.forecastBookings)
+      .map(([key, value]) => ({ monthCode: Number(key), value: Number(value) }))
+      .sort((a, b) => a.monthCode - b.monthCode);
+
+    const labels = entries.map(e => this.monthNameFromCode(e.monthCode));
+    const data = entries.map(e => e.value);
 
     return {
-      labels: this.monthLabels,
+      labels,
       datasets: [
         {
-          data: temps,
-          label: 'Avg Temperature (°C)'
+          data,
+          label: 'Forecasted Bookings'
         }
       ]
     };
@@ -586,7 +587,10 @@ export class AdminComponent {
       this.svc.getForecastForAccommodation({
         selectedAccommodation: selectedAccommodation
       }).subscribe({
-        next: (list) => this.tab5Results.set(list),
+        next: (item) => {
+          // 👇 wrap the single DTO as an array
+          this.tab5Results.set([item]);
+        },
         error: (err) => {
           console.error('forecast search failed', err);
           this.tab5Results.set([]);
@@ -601,6 +605,7 @@ export class AdminComponent {
       });
     }
   }
+
 
     getDistrictsForSelectedProvince(): string[] {
     const province = this.tab4Form.get('province')?.value as string | null;
@@ -636,6 +641,12 @@ export class AdminComponent {
         this.allAccomodationsToSelect = [];
       }
     });
+  }
+
+  private monthNameFromCode(code: number): string {
+    let m = ((code - 1) % 12) + 1;          // convert 13→1, 14→2...
+    const names = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    return names[m - 1];
   }
 
 

@@ -192,23 +192,18 @@
 
             <mat-card-content class="chart-row">
               <div class="chart-box">
-                <p><strong>Average temperature graph</strong></p>
+                <p><strong>Forecasted Bookings</strong></p>
                 <div class="chart-container">
                   <canvas
                     baseChart
                     [type]="'bar'"
-                    [data]="getTempChartData(a)"
-                    [options]="temperatureBarOptions">
+                    [data]="getForecastChartData(a)"
+                    [options]="forecastBarOptions">
                   </canvas>
                 </div>
               </div>
             </mat-card-content>
 
-            <mat-card-actions>
-              <a mat-button color="accent" [routerLink]="['/book', a.id]">
-                Click to book
-              </a>
-            </mat-card-actions>
           </mat-card>
         </div>
       </div>
