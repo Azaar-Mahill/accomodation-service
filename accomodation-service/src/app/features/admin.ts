@@ -376,7 +376,7 @@ export class AdminComponent {
       x: {},
       y: {
         beginAtZero: true,
-        max: 100,
+        max: 150,
         title: { display: true, text: 'nights per booking' }
       }
     }
