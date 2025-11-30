@@ -731,6 +731,7 @@ public class AccommodationService {
         // 1. TAKE BOOKINGS FOR PAST 10 MONTHS (x = 1 to 10)
         // ============================================================================================
         Map<Integer, Integer> past10MonthsCount = new LinkedHashMap<>();
+        Map<Integer, BigDecimal> past10MonthsRevenue = new LinkedHashMap<>();
 
         for (int i = 10; i >= 1; i--) {
             LocalDate targetMonth = today.minusMonths(i);
@@ -738,14 +739,17 @@ public class AccommodationService {
             int targetMonthNum = targetMonth.getMonthValue();
 
             int count = 0;
+            BigDecimal MonthRevenue = BigDecimal.ZERO;
             for (BookAccomodation b : bookingsFromRoomSK) {
                 int year = Integer.parseInt(b.getCheckinDateSk().substring(0, 4));
                 int month = Integer.parseInt(b.getCheckinDateSk().substring(5, 7));
                 if (year == targetYear && month == targetMonthNum) {
                     count++;
+                    MonthRevenue = MonthRevenue.add(b.getTotalAmount());
                 }
             }
             past10MonthsCount.put(11 - i, count);   // x = 1 → oldest, x = 10 → latest
+            past10MonthsRevenue.put(11 - i, MonthRevenue);
         }
 
         // ============================================================================================
@@ -776,17 +780,49 @@ public class AccommodationService {
         BigDecimal b = numerator.divide(denominator, 8, RoundingMode.HALF_UP);
         BigDecimal a = (sumY.subtract(b.multiply(sumX))).divide(n, 8, RoundingMode.HALF_UP);
 
+        ////////////////////////////////
+
+        BigDecimal sumXRevenue = BigDecimal.ZERO;
+        BigDecimal sumYRevenue = BigDecimal.ZERO;
+        BigDecimal sumXYRevenue = BigDecimal.ZERO;
+        BigDecimal sumXXRevenue = BigDecimal.ZERO;
+
+        for (Map.Entry<Integer, BigDecimal> entry : past10MonthsRevenue.entrySet()) {
+            BigDecimal x = new BigDecimal(entry.getKey());
+            BigDecimal y = new BigDecimal(String.valueOf(entry.getValue()));
+
+            sumXRevenue = sumXRevenue.add(x);
+            sumYRevenue = sumYRevenue.add(y);
+            sumXYRevenue = sumXYRevenue.add(x.multiply(y));
+            sumXXRevenue = sumXXRevenue.add(x.multiply(x));
+        }
+
+        BigDecimal nRevenue = new BigDecimal(past10MonthsRevenue.size());
+
+        // slope b = (n Σxy - Σx Σy) / (n Σx^2 - (Σx)^2)
+        BigDecimal numeratorRevenue = (nRevenue.multiply(sumXYRevenue)).subtract(sumXRevenue.multiply(sumYRevenue));
+        BigDecimal denominatorRevenue = (nRevenue.multiply(sumXXRevenue)).subtract(sumXRevenue.multiply(sumXRevenue));
+
+        BigDecimal bRevenue = numeratorRevenue.divide(denominatorRevenue, 8, RoundingMode.HALF_UP);
+        BigDecimal aRevenue = (sumYRevenue.subtract(bRevenue.multiply(sumXRevenue))).divide(nRevenue, 8, RoundingMode.HALF_UP);
+
         // ============================================================================================
         // 3. FORECAST NEXT 5 MONTHS USING REGRESSION
         // ============================================================================================
 
         Map<Integer, BigDecimal> regressionForecast = new LinkedHashMap<>();
+        Map<Integer, BigDecimal> regressionForecastRevenue = new LinkedHashMap<>();
 
         for (int i = 1; i <= 5; i++) {
             BigDecimal x = new BigDecimal(10 + i);  // x = 11,12,13,14,15
             BigDecimal yHat = a.add(b.multiply(x));
             if (yHat.compareTo(BigDecimal.ZERO) < 0) yHat = BigDecimal.ZERO; // avoid negatives
             regressionForecast.put(i, yHat);
+
+            BigDecimal xRevenue = new BigDecimal(10 + i);  // x = 11,12,13,14,15
+            BigDecimal yHatRevenue = aRevenue.add(bRevenue.multiply(xRevenue));
+            if (yHatRevenue.compareTo(BigDecimal.ZERO) < 0) yHatRevenue = BigDecimal.ZERO; // avoid negatives
+            regressionForecastRevenue.put(i, yHatRevenue);
         }
 
         // ============================================================================================
@@ -794,9 +830,11 @@ public class AccommodationService {
         // ============================================================================================
 
         Map<Integer, BigDecimal> seasonalIndex = new HashMap<>();
+        Map<Integer, BigDecimal> seasonalIndexRevenue = new HashMap<>();
 
         for (int month = 1; month <= 12; month++) {
             int count = 0;
+            BigDecimal Revenue = BigDecimal.ZERO;
             int distinctYears = 0;
             Set<Integer> yearSet = new HashSet<>();
 
@@ -806,6 +844,7 @@ public class AccommodationService {
 
                 if (m == month && y != currentYear) {
                     count++;
+                    Revenue = Revenue.add(c.getTotalAmount());
                     yearSet.add(y);
                 }
             }
@@ -814,8 +853,12 @@ public class AccommodationService {
             BigDecimal index = (distinctYears == 0)
                     ? BigDecimal.ONE
                     : new BigDecimal(count).divide(new BigDecimal(distinctYears), 8, RoundingMode.HALF_UP);
+            BigDecimal indexRevenue = (distinctYears == 0)
+                    ? BigDecimal.ONE
+                    : new BigDecimal(String.valueOf(Revenue)).divide(new BigDecimal(distinctYears), 8, RoundingMode.HALF_UP);
 
             seasonalIndex.put(month, index);
+            seasonalIndexRevenue.put(month, indexRevenue);
         }
 
         // ============================================================================================
@@ -823,6 +866,7 @@ public class AccommodationService {
         // ============================================================================================
 
         Map<Integer, Integer> finalForecastBookings = new LinkedHashMap<>();
+        Map<Integer, BigDecimal> finalForecastRevenues = new LinkedHashMap<>();
 
         for (int i = 1; i <= 5; i++) {
 
@@ -833,9 +877,15 @@ public class AccommodationService {
             int monthOfYear = ((currentMonth - 1 + i) % 12) + 1;
 
             BigDecimal regValue = regressionForecast.get(i);
+            BigDecimal regValueRevenue = regressionForecastRevenue.get(i);
             BigDecimal si = seasonalIndex.get(monthOfYear);
+            BigDecimal siRevenue = seasonalIndexRevenue.get(monthOfYear);
             if (si == null) {
                 si = BigDecimal.ONE; // safety fallback
+            }
+
+            if (siRevenue == null) {
+                siRevenue = BigDecimal.ONE; // safety fallback
             }
 
             int finalValueInt = regValue
@@ -843,16 +893,19 @@ public class AccommodationService {
                     .setScale(0, RoundingMode.HALF_UP)
                     .intValue();
 
+            BigDecimal finalRevenueValue = regValueRevenue
+                    .multiply(siRevenue)
+                    .setScale(0, RoundingMode.HALF_UP);
+
             // 🔹 Store using the original, non-wrapped key (e.g., 13, 14, 15)
             finalForecastBookings.put(forecastKey, finalValueInt);
+            finalForecastRevenues.put(forecastKey,finalRevenueValue);
         }
 
-
         forecastingDTO.setForecastBookings(finalForecastBookings);
+        forecastingDTO.setForecastRevenues(finalForecastRevenues);
 
         return forecastingDTO;
     }
-
-
 }
 

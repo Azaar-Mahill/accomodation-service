@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -27,4 +28,6 @@ public class ForecastingDTO {
     private String environment;
 
     Map<Integer, Integer> forecastBookings = new LinkedHashMap<>();
+
+    Map<Integer, BigDecimal> forecastRevenues = new LinkedHashMap<>();
 }
