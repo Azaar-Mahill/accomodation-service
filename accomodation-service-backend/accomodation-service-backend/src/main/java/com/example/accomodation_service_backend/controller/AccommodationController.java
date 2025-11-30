@@ -69,7 +69,7 @@ public class AccommodationController {
     public void forecast(
             @RequestParam(required = false) String accommodationID
     ) {
-        svc.forecast();
+        svc.forecast(accommodationID);
     }
 }
 

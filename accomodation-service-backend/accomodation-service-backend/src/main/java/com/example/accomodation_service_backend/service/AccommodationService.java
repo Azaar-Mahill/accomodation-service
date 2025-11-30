@@ -6,12 +6,10 @@ import com.example.accomodation_service_backend.repo.*;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
 import java.math.RoundingMode;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.time.LocalDate;
 
 @Service
@@ -703,8 +701,131 @@ public class AccommodationService {
 
     }
 
-    public void forecast(){
+    public void forecast(String accommodationID) {
+
+        List<String> roomSKs = roomRepository.getRoomsUsingAccomodationSk(accommodationID);
+        List<BookAccomodation> bookingsFromRoomSK = new ArrayList<>();
+        for (String roomSK : roomSKs) {
+            bookingsFromRoomSK.addAll(bookAccomodationRepository.getBookingsUsingRoomSk(roomSK));
+        }
+
+        LocalDate today = LocalDate.now();
+        int currentYear = today.getYear();
+        int currentMonth = today.getMonthValue();
+
+        // ============================================================================================
+        // 1. TAKE BOOKINGS FOR PAST 10 MONTHS (x = 1 to 10)
+        // ============================================================================================
+        Map<Integer, Integer> past10MonthsCount = new LinkedHashMap<>();
+
+        for (int i = 10; i >= 1; i--) {
+            LocalDate targetMonth = today.minusMonths(i);
+            int targetYear = targetMonth.getYear();
+            int targetMonthNum = targetMonth.getMonthValue();
+
+            int count = 0;
+            for (BookAccomodation b : bookingsFromRoomSK) {
+                int year = Integer.parseInt(b.getCheckinDateSk().substring(0, 4));
+                int month = Integer.parseInt(b.getCheckinDateSk().substring(5, 7));
+                if (year == targetYear && month == targetMonthNum) {
+                    count++;
+                }
+            }
+            past10MonthsCount.put(11 - i, count);   // x = 1 → oldest, x = 10 → latest
+        }
+
+        // ============================================================================================
+        // 2. COMPUTE LINEAR REGRESSION (BigDecimal)
+        // ============================================================================================
+
+        BigDecimal sumX = BigDecimal.ZERO;
+        BigDecimal sumY = BigDecimal.ZERO;
+        BigDecimal sumXY = BigDecimal.ZERO;
+        BigDecimal sumXX = BigDecimal.ZERO;
+
+        for (Map.Entry<Integer, Integer> entry : past10MonthsCount.entrySet()) {
+            BigDecimal x = new BigDecimal(entry.getKey());
+            BigDecimal y = new BigDecimal(entry.getValue());
+
+            sumX = sumX.add(x);
+            sumY = sumY.add(y);
+            sumXY = sumXY.add(x.multiply(y));
+            sumXX = sumXX.add(x.multiply(x));
+        }
+
+        BigDecimal n = new BigDecimal(past10MonthsCount.size());
+
+        // slope b = (n Σxy - Σx Σy) / (n Σx^2 - (Σx)^2)
+        BigDecimal numerator = (n.multiply(sumXY)).subtract(sumX.multiply(sumY));
+        BigDecimal denominator = (n.multiply(sumXX)).subtract(sumX.multiply(sumX));
+
+        BigDecimal b = numerator.divide(denominator, 8, RoundingMode.HALF_UP);
+        BigDecimal a = (sumY.subtract(b.multiply(sumX))).divide(n, 8, RoundingMode.HALF_UP);
+
+        // ============================================================================================
+        // 3. FORECAST NEXT 5 MONTHS USING REGRESSION
+        // ============================================================================================
+
+        Map<Integer, BigDecimal> regressionForecast = new LinkedHashMap<>();
+
+        for (int i = 1; i <= 5; i++) {
+            BigDecimal x = new BigDecimal(10 + i);  // x = 11,12,13,14,15
+            BigDecimal yHat = a.add(b.multiply(x));
+            if (yHat.compareTo(BigDecimal.ZERO) < 0) yHat = BigDecimal.ZERO; // avoid negatives
+            regressionForecast.put(i, yHat);
+        }
+
+        // ============================================================================================
+        // 4. CALCULATE SEASONAL INDEX FOR EACH MONTH (BASED ON PAST YEARS)
+        // ============================================================================================
+
+        Map<Integer, BigDecimal> seasonalIndex = new HashMap<>();
+
+        for (int month = 1; month <= 12; month++) {
+            int count = 0;
+            int distinctYears = 0;
+            Set<Integer> yearSet = new HashSet<>();
+
+            for (BookAccomodation c : bookingsFromRoomSK) {
+                int y = Integer.parseInt(c.getCheckinDateSk().substring(0, 4));
+                int m = Integer.parseInt(c.getCheckinDateSk().substring(5, 7));
+
+                if (m == month && y != currentYear) {
+                    count++;
+                    yearSet.add(y);
+                }
+            }
+
+            distinctYears = yearSet.size();
+            BigDecimal index = (distinctYears == 0)
+                    ? BigDecimal.ONE
+                    : new BigDecimal(count).divide(new BigDecimal(distinctYears), 8, RoundingMode.HALF_UP);
+
+            seasonalIndex.put(month, index);
+        }
+
+        // ============================================================================================
+        // 5. FINAL FORECAST = regression forecast × seasonal index
+        // ============================================================================================
+
+        Map<Integer, Integer> finalForecastBookings = new LinkedHashMap<>();
+
+        for (int i = 1; i <= 5; i++) {
+            int forecastMonth = ((currentMonth + i - 1) % 12) + 1;
+            BigDecimal regValue = regressionForecast.get(i);
+            BigDecimal si = seasonalIndex.get(forecastMonth);
+
+            int finalValueInt = regValue
+                    .multiply(si)
+                    .setScale(0, RoundingMode.HALF_UP)
+                    .intValue();
+
+            finalForecastBookings.put(forecastMonth, finalValueInt);
+        }
+
 
     }
+
+
 }
 
