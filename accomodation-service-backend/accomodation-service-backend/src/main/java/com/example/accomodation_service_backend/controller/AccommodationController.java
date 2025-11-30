@@ -64,5 +64,12 @@ public class AccommodationController {
     public List<AccomodationDTO> getAllAcommodations() {
         return svc.getAllAcommodations();
     }
+
+    @GetMapping("/forecast")
+    public void forecast(
+            @RequestParam(required = false) String accommodationID
+    ) {
+        svc.forecast();
+    }
 }
 

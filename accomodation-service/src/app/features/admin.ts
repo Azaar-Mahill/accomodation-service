@@ -578,25 +578,25 @@ export class AdminComponent {
   }
 
   searchTab5(): void {
+    const { selectedAccommodation } = this.tab5Form.value as {
+      selectedAccommodation: Accommodation6 | null;
+    };
 
-    const { accomodationType } = this.tab5Form.value;
-
-    if( accomodationType != null ){
-      this.svc.accomodationTypeInformation({
-        accomodationType: accomodationType ?? null
+    if (selectedAccommodation) {
+      this.svc.getForecastForAccommodation({
+        selectedAccommodation: selectedAccommodation
       }).subscribe({
         next: (list) => this.tab5Results.set(list),
         error: (err) => {
-          console.error('accomodationType selection search failed', err);
+          console.error('forecast search failed', err);
           this.tab5Results.set([]);
         }
       });
-    }else{
-      //open a popup asking to select values in drop downs
+    } else {
       this.dialog.open(InfoDialogComponent, {
         data: {
           title: 'Selections required',
-          message: 'Please select accomodationType before searching.'
+          message: 'Please select an accommodation before searching.'
         }
       });
     }

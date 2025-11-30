@@ -102,9 +102,18 @@ export class AccommodationService {
   }
 
   getAllAcommodations(): Observable<Accommodation6[]> {
-  return this.http.get<Accommodation6[]>(
-    `${this.baseUrl}/api/accommodations/getAllAcommodations`
-  );
-}
+    return this.http.get<Accommodation6[]>(
+      `${this.baseUrl}/api/accommodations/getAllAcommodations`
+    );
+  }
+
+  getForecastForAccommodation(params: { selectedAccommodation: Accommodation6 }): Observable<Accommodation[]> {
+    const httpParams = new HttpParams().set('accommodationID', params.selectedAccommodation.id);
+
+    return this.http.get<Accommodation[]>(
+      `${this.baseUrl}/api/accommodations/forecast`,
+      { params: httpParams }
+    );
+  }
 
 }

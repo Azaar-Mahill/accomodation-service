@@ -696,5 +696,9 @@ public class AccommodationService {
         return returnAllAcommodations;
 
     }
+
+    public void forecast(){
+
+    }
 }
 
