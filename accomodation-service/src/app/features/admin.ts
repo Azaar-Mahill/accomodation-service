@@ -16,7 +16,7 @@ import { ChartConfiguration } from 'chart.js';
 import { AccommodationService } from '../core/accommodation.service';
 import { AccommodationType, EnvironmentType } from '../core/models';
 import { ACCOMMODATIONS } from '../core/mock-accommodations';
-import { Accommodation } from '../core/models';
+import { Accommodation, Accommodation6 } from '../core/models';
 import { InfoDialogComponent } from './info-dialog.component';
 import { AuthService } from '../core/auth.service';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -48,7 +48,7 @@ export class AdminComponent {
   }));
   environmentTypes: EnvironmentType[] = ['Any','Beach','Hill Country','City','Wildlife','Cultural'];
   accomodationTypes: AccommodationType[] = ['Any','Hotel','Resort','Villa','Guest House','Hostel'];
-  allAccomodationsToSelect: string[] = [];
+  allAccomodationsToSelect: Accommodation6[] = [];
 
     provinces: string[] = [
     'Western',

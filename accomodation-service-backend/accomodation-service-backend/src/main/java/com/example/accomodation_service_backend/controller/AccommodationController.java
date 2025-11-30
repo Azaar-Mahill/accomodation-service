@@ -61,8 +61,8 @@ public class AccommodationController {
     }
 
     @GetMapping("/getAllAcommodations")
-    public void getAllAcommodations() {
-        svc.getAllAcommodations();
+    public List<AccomodationDTO> getAllAcommodations() {
+        return svc.getAllAcommodations();
     }
 }
 

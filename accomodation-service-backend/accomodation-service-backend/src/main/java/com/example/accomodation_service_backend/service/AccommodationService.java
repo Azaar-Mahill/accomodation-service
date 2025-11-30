@@ -671,7 +671,29 @@ public class AccommodationService {
 
     }
 
-    public void getAllAcommodations(){
+    public List<AccomodationDTO> getAllAcommodations(){
+
+        List<AccomodationDTO> returnAllAcommodations = new ArrayList<>();
+
+        List<Accommodation> listOfAllAccomodations = accommodationRepository.getAllAcommodations();
+
+        for(Accommodation allAccomodation: listOfAllAccomodations){
+
+            AccomodationDTO accomodationDTO = new AccomodationDTO();
+            accomodationDTO.setId(allAccomodation.getAccommodationSk());
+            accomodationDTO.setAccommodationName(allAccomodation.getAccommodationName());
+
+            String province = accommodationLocationRepository.getProvince(allAccomodation.getAccommodationLocationSk());
+            String district = accommodationLocationRepository.getDistrict(allAccomodation.getAccommodationLocationSk());
+            String city = accommodationLocationRepository.getCity(allAccomodation.getAccommodationLocationSk());
+            String address = String.format("%s, %s, %s province", city, district, province);
+
+            accomodationDTO.setAccommodationAddress(address);
+            returnAllAcommodations.add(accomodationDTO);
+
+        }
+
+        return returnAllAcommodations;
 
     }
 }

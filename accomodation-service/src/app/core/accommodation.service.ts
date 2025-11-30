@@ -1,7 +1,7 @@
 import { Injectable, signal } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { ACCOMMODATIONS } from './mock-accommodations';
-import { Accommodation, Accommodation2, Accommodation3, Accommodation4, Accommodation5, AccommodationType, EnvironmentType } from './models';
+import { Accommodation, Accommodation2, Accommodation3, Accommodation4, Accommodation5, Accommodation6, AccommodationType, EnvironmentType } from './models';
 import { environment } from '../../environments/environment';
 import { Observable } from 'rxjs';
 
@@ -101,8 +101,8 @@ export class AccommodationService {
     );
   }
 
-  getAllAcommodations(): Observable<string[]> {
-  return this.http.get<string[]>(
+  getAllAcommodations(): Observable<Accommodation6[]> {
+  return this.http.get<Accommodation6[]>(
     `${this.baseUrl}/api/accommodations/getAllAcommodations`
   );
 }

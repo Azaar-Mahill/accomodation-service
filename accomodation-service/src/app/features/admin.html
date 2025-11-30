@@ -168,8 +168,8 @@
           <mat-form-field appearance="outline">
             <mat-label>Select Accommodation</mat-label>
             <mat-select formControlName="selectedAccommodation">
-              <mat-option *ngFor="let name of allAccomodationsToSelect" [value]="name">
-                {{ name }}
+              <mat-option *ngFor="let a of allAccomodationsToSelect" [value]="a">
+                {{ a.accommodationName }} - {{ a.accommodationAddress }}
               </mat-option>
             </mat-select>
           </mat-form-field>

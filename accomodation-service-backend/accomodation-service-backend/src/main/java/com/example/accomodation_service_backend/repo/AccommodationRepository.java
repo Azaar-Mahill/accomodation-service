@@ -38,6 +38,12 @@ public interface AccommodationRepository extends JpaRepository<Accommodation, St
            """)
     Accommodation findAccomodationById(@Param("accommodationSk") String accommodationSk);
 
+    @Query("""
+           SELECT a
+           FROM Accommodation a
+           """)
+    List<Accommodation> getAllAcommodations();
+
 
 }
 

@@ -64,3 +64,9 @@ export interface Accommodation5 {
   avgPrecipByMonthMm: Record<number, number>;    // 1..12
   bookingUrl?: string;
 }
+
+export interface Accommodation6 {
+  id: string;
+  accommodationName: string;
+  accommodationAddress: string;
+}
