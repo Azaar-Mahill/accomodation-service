@@ -27,7 +27,9 @@ public class ForecastingDTO {
     @Column(name = "Environment")
     private String environment;
 
-    Map<Integer, Integer> forecastBookings = new LinkedHashMap<>();
+    Map<Integer, Integer> forecastBookings;
 
-    Map<Integer, BigDecimal> forecastRevenues = new LinkedHashMap<>();
+    Map<Integer, BigDecimal> forecastRevenues;
+
+    BigDecimal avgDiscountPerMonth;
 }

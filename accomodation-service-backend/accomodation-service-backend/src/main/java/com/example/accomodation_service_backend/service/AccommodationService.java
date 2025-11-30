@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
+import java.time.YearMonth;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.time.LocalDate;
@@ -904,6 +905,39 @@ public class AccommodationService {
 
         forecastingDTO.setForecastBookings(finalForecastBookings);
         forecastingDTO.setForecastRevenues(finalForecastRevenues);
+
+        BigDecimal avgDiscountPerMonth = BigDecimal.ZERO;
+
+        YearMonth currentYm = YearMonth.now();
+        YearMonth startYm = currentYm.minusMonths(4);
+
+        BigDecimal totalDiscount = BigDecimal.ZERO;
+        int count = 0;
+
+        for (BookAccomodation booking : bookingsFromRoomSK) {
+
+            if (booking.getDiscount() == null) {
+                continue;
+            }
+
+            LocalDate checkinDate = LocalDate.parse(booking.getCheckinDateSk());
+            YearMonth bookingYm = YearMonth.from(checkinDate);
+
+            if (bookingYm.isBefore(startYm) || bookingYm.isAfter(currentYm)) {
+                continue;
+            }
+
+            totalDiscount = totalDiscount.add(booking.getDiscount());
+            count++;
+        }
+
+        if (count == 0) {
+            avgDiscountPerMonth = BigDecimal.ZERO;   // or return null if you prefer
+        }else{
+            avgDiscountPerMonth = totalDiscount.divide(BigDecimal.valueOf(count), 2, RoundingMode.HALF_UP);
+        }
+
+        forecastingDTO.setAvgDiscountPerMonth(avgDiscountPerMonth);
 
         return forecastingDTO;
     }
