@@ -329,7 +329,7 @@ export class AdminComponent {
       x: {},
       y: {
         beginAtZero: true,
-        max: 100000,
+        max: 500000,
         title: { display: true, text: 'rupees' }
       }
     }
@@ -344,7 +344,7 @@ export class AdminComponent {
       x: {},
       y: {
         beginAtZero: true,
-        max: 100000,
+        max: 300000,
         title: { display: true, text: 'rupees per room' }
       }
     }
@@ -374,7 +374,7 @@ export class AdminComponent {
       x: {},
       y: {
         beginAtZero: true,
-        max: 30,
+        max: 100,
         title: { display: true, text: 'nights per booking' }
       }
     }
