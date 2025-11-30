@@ -32,4 +32,6 @@ public class ForecastingDTO {
     Map<Integer, BigDecimal> forecastRevenues;
 
     BigDecimal avgDiscountPerMonth;
+
+    BigDecimal avgRoomRatePerMonth;
 }

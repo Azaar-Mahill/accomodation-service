@@ -907,12 +907,15 @@ public class AccommodationService {
         forecastingDTO.setForecastRevenues(finalForecastRevenues);
 
         BigDecimal avgDiscountPerMonth = BigDecimal.ZERO;
+        BigDecimal avgRoomRatePerMonth = BigDecimal.ZERO;
 
         YearMonth currentYm = YearMonth.now();
         YearMonth startYm = currentYm.minusMonths(4);
 
         BigDecimal totalDiscount = BigDecimal.ZERO;
+        BigDecimal totalPerNightRate = BigDecimal.ZERO;
         int count = 0;
+        int countForNightRate = 0;
 
         for (BookAccomodation booking : bookingsFromRoomSK) {
 
@@ -931,6 +934,38 @@ public class AccommodationService {
             count++;
         }
 
+        for (BookAccomodation booking : bookingsFromRoomSK) {
+
+            if (booking.getTotalAmount() == null) {
+                // no total amount recorded – skip
+                continue;
+            }
+
+            // Parse dates (format: "YYYY-MM-DD")
+            LocalDate checkinDate = LocalDate.parse(booking.getCheckinDateSk());
+            LocalDate checkoutDate = LocalDate.parse(booking.getCheckoutDateSk());
+
+            YearMonth bookingYm = YearMonth.from(checkinDate);
+
+            // Only consider bookings in the last 5 months (based on check-in month)
+            if (bookingYm.isBefore(startYm) || bookingYm.isAfter(currentYm)) {
+                continue;
+            }
+
+            long nights = ChronoUnit.DAYS.between(checkinDate, checkoutDate);
+            if (nights <= 0) {
+                // invalid or same-day booking – skip
+                continue;
+            }
+
+            // per-night room rate = TotalAmount / nights
+            BigDecimal perNightRate = booking.getTotalAmount()
+                    .divide(BigDecimal.valueOf(nights), 2, RoundingMode.HALF_UP);
+
+            totalPerNightRate = totalPerNightRate.add(perNightRate);
+            countForNightRate++;
+        }
+
         if (count == 0) {
             avgDiscountPerMonth = BigDecimal.ZERO;   // or return null if you prefer
         }else{
@@ -938,6 +973,15 @@ public class AccommodationService {
         }
 
         forecastingDTO.setAvgDiscountPerMonth(avgDiscountPerMonth);
+
+        if (countForNightRate == 0) {
+            avgRoomRatePerMonth = BigDecimal.ZERO;   // or return null if you prefer
+        }else{
+            avgRoomRatePerMonth = totalPerNightRate.divide(BigDecimal.valueOf(countForNightRate), 2, RoundingMode.HALF_UP);
+        }
+
+        forecastingDTO.setAvgDiscountPerMonth(avgDiscountPerMonth);
+        forecastingDTO.setAvgRoomRatePerMonth(avgRoomRatePerMonth);
 
         return forecastingDTO;
     }
