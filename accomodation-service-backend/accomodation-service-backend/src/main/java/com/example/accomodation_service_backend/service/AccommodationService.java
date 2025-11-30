@@ -701,7 +701,21 @@ public class AccommodationService {
 
     }
 
-    public void forecast(String accommodationID) {
+    public ForecastingDTO forecast(String accommodationID) {
+
+        ForecastingDTO forecastingDTO = new ForecastingDTO();
+        Accommodation requireAccommodation = accommodationRepository.findAccomodationById(accommodationID);
+
+        forecastingDTO.setId(requireAccommodation.getAccommodationSk());
+        forecastingDTO.setAccommodationName(requireAccommodation.getAccommodationName());
+
+        String province = accommodationLocationRepository.getProvince(requireAccommodation.getAccommodationLocationSk());
+        String district = accommodationLocationRepository.getDistrict(requireAccommodation.getAccommodationLocationSk());
+        String city = accommodationLocationRepository.getCity(requireAccommodation.getAccommodationLocationSk());
+        String address = String.format("%s, %s, %s province", city, district, province);
+
+        forecastingDTO.setAccommodationAddress(address);
+        forecastingDTO.setEnvironment(accommodationLocationRepository.getEnvironment(requireAccommodation.getAccommodationLocationSk()));
 
         List<String> roomSKs = roomRepository.getRoomsUsingAccomodationSk(accommodationID);
         List<BookAccomodation> bookingsFromRoomSK = new ArrayList<>();
@@ -811,19 +825,32 @@ public class AccommodationService {
         Map<Integer, Integer> finalForecastBookings = new LinkedHashMap<>();
 
         for (int i = 1; i <= 5; i++) {
-            int forecastMonth = ((currentMonth + i - 1) % 12) + 1;
+
+            // 🔹 This is your "time index" or "extended month" (11, 12, 13, ...)
+            int forecastKey = currentMonth + i;
+
+            // 🔹 Convert to 1..12 ONLY for seasonal index lookup
+            int monthOfYear = ((currentMonth - 1 + i) % 12) + 1;
+
             BigDecimal regValue = regressionForecast.get(i);
-            BigDecimal si = seasonalIndex.get(forecastMonth);
+            BigDecimal si = seasonalIndex.get(monthOfYear);
+            if (si == null) {
+                si = BigDecimal.ONE; // safety fallback
+            }
 
             int finalValueInt = regValue
                     .multiply(si)
                     .setScale(0, RoundingMode.HALF_UP)
                     .intValue();
 
-            finalForecastBookings.put(forecastMonth, finalValueInt);
+            // 🔹 Store using the original, non-wrapped key (e.g., 13, 14, 15)
+            finalForecastBookings.put(forecastKey, finalValueInt);
         }
 
 
+        forecastingDTO.setForecastBookings(finalForecastBookings);
+
+        return forecastingDTO;
     }
 
 

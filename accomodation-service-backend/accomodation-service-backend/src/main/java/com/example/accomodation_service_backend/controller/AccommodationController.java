@@ -66,10 +66,10 @@ public class AccommodationController {
     }
 
     @GetMapping("/forecast")
-    public void forecast(
+    public ForecastingDTO forecast(
             @RequestParam(required = false) String accommodationID
     ) {
-        svc.forecast(accommodationID);
+        return svc.forecast(accommodationID);
     }
 }
 
