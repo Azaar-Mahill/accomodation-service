@@ -16,4 +16,11 @@ public interface RoomRepository extends JpaRepository<Room, String> {
            WHERE LOWER(a.accommodationSk) = LOWER(:accommodationSK)
            """)
     List<String> getRoomsUsingAccomodationSk(@Param("accommodationSK") String accommodationSK);
+
+    @Query("""
+           SELECT a
+           FROM Room a
+           WHERE LOWER(a.accommodationSk) = LOWER(:accommodationSK)
+           """)
+    List<Room> getRoomDetailsUsingAccomodationSk(@Param("accommodationSK") String accommodationSK);
 }

@@ -718,10 +718,10 @@ public class AccommodationService {
         forecastingDTO.setAccommodationAddress(address);
         forecastingDTO.setEnvironment(accommodationLocationRepository.getEnvironment(requireAccommodation.getAccommodationLocationSk()));
 
-        List<String> roomSKs = roomRepository.getRoomsUsingAccomodationSk(accommodationID);
+        List<Room> requireRooms = roomRepository.getRoomDetailsUsingAccomodationSk(accommodationID);
         List<BookAccomodation> bookingsFromRoomSK = new ArrayList<>();
-        for (String roomSK : roomSKs) {
-            bookingsFromRoomSK.addAll(bookAccomodationRepository.getBookingsUsingRoomSk(roomSK));
+        for (Room requireRoom : requireRooms) {
+            bookingsFromRoomSK.addAll(bookAccomodationRepository.getBookingsUsingRoomSk(requireRoom.getRoomSk()));
         }
 
         LocalDate today = LocalDate.now();
@@ -907,15 +907,15 @@ public class AccommodationService {
         forecastingDTO.setForecastRevenues(finalForecastRevenues);
 
         BigDecimal avgDiscountPerMonth = BigDecimal.ZERO;
-        BigDecimal avgRoomRatePerMonth = BigDecimal.ZERO;
+        BigDecimal avgRateOfRoomPerMonth = BigDecimal.ZERO;
 
         YearMonth currentYm = YearMonth.now();
         YearMonth startYm = currentYm.minusMonths(4);
 
         BigDecimal totalDiscount = BigDecimal.ZERO;
-        BigDecimal totalPerNightRate = BigDecimal.ZERO;
+        BigDecimal totalRateOfRoom = BigDecimal.ZERO;
         int count = 0;
-        int countForNightRate = 0;
+        int countOfRooms = 0;
 
         for (BookAccomodation booking : bookingsFromRoomSK) {
 
@@ -934,36 +934,13 @@ public class AccommodationService {
             count++;
         }
 
-        for (BookAccomodation booking : bookingsFromRoomSK) {
-
-            if (booking.getTotalAmount() == null) {
-                // no total amount recorded – skip
-                continue;
+        for(Room requireRoom:requireRooms){
+            BigDecimal rate = requireRoom.getRateOfRoom();
+            if (rate == null) {
+                continue; // or treat as ZERO – depends on your business logic
             }
-
-            // Parse dates (format: "YYYY-MM-DD")
-            LocalDate checkinDate = LocalDate.parse(booking.getCheckinDateSk());
-            LocalDate checkoutDate = LocalDate.parse(booking.getCheckoutDateSk());
-
-            YearMonth bookingYm = YearMonth.from(checkinDate);
-
-            // Only consider bookings in the last 5 months (based on check-in month)
-            if (bookingYm.isBefore(startYm) || bookingYm.isAfter(currentYm)) {
-                continue;
-            }
-
-            long nights = ChronoUnit.DAYS.between(checkinDate, checkoutDate);
-            if (nights <= 0) {
-                // invalid or same-day booking – skip
-                continue;
-            }
-
-            // per-night room rate = TotalAmount / nights
-            BigDecimal perNightRate = booking.getTotalAmount()
-                    .divide(BigDecimal.valueOf(nights), 2, RoundingMode.HALF_UP);
-
-            totalPerNightRate = totalPerNightRate.add(perNightRate);
-            countForNightRate++;
+            totalRateOfRoom = totalRateOfRoom.add(rate);
+            countOfRooms++;
         }
 
         if (count == 0) {
@@ -972,16 +949,15 @@ public class AccommodationService {
             avgDiscountPerMonth = totalDiscount.divide(BigDecimal.valueOf(count), 2, RoundingMode.HALF_UP);
         }
 
-        forecastingDTO.setAvgDiscountPerMonth(avgDiscountPerMonth);
-
-        if (countForNightRate == 0) {
-            avgRoomRatePerMonth = BigDecimal.ZERO;   // or return null if you prefer
+        if (countOfRooms == 0) {
+            avgRateOfRoomPerMonth = BigDecimal.ZERO;   // or return null if you prefer
         }else{
-            avgRoomRatePerMonth = totalPerNightRate.divide(BigDecimal.valueOf(countForNightRate), 2, RoundingMode.HALF_UP);
+            avgRateOfRoomPerMonth = totalRateOfRoom.divide(BigDecimal.valueOf(countOfRooms), 2, RoundingMode.HALF_UP);
         }
 
         forecastingDTO.setAvgDiscountPerMonth(avgDiscountPerMonth);
-        forecastingDTO.setAvgRoomRatePerMonth(avgRoomRatePerMonth);
+
+        forecastingDTO.setAvgRoomRatePerMonth(avgRateOfRoomPerMonth);
 
         return forecastingDTO;
     }
