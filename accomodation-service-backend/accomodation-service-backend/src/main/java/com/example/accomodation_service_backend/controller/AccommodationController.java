@@ -59,5 +59,10 @@ public class AccommodationController {
     ) {
         return svc.findKPIInformation(province, useDistrict,district, useCity, city);
     }
+
+    @GetMapping("/getAllAcommodations")
+    public void getAllAcommodations() {
+        svc.getAllAcommodations();
+    }
 }
 

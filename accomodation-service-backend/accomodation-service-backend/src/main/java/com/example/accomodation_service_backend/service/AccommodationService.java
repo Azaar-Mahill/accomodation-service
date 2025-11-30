@@ -670,5 +670,9 @@ public class AccommodationService {
         return listOfAccomodationKPIDTO;
 
     }
+
+    public void getAllAcommodations(){
+
+    }
 }
 

@@ -6,7 +6,7 @@
   </button>
 </div>
 
-<mat-tab-group>
+<mat-tab-group (selectedTabChange)="onTabChange($event)">
 
 <!-- TAB4 -->
   <mat-tab label="KPIs">
@@ -166,18 +166,23 @@
       <div class="content-layout">
         <div class="filters">
           <mat-form-field appearance="outline">
-            <mat-label>Type of Accommodation</mat-label>
-            <mat-select formControlName="accomodationType">
-              <mat-option *ngFor="let t of accomodationTypes" [value]="t">{{ t }}</mat-option>
+            <mat-label>Select Accommodation</mat-label>
+            <mat-select formControlName="selectedAccommodation">
+              <mat-option *ngFor="let name of allAccomodationsToSelect" [value]="name">
+                {{ name }}
+              </mat-option>
             </mat-select>
           </mat-form-field>
 
-          <button mat-raised-button color="primary" type="button" (click)="searchTab5()">Search</button>
+          <button mat-raised-button color="primary" type="button" (click)="searchTab5()">
+            Search
+          </button>
         </div>
 
         <div class="results5">
           <mat-card class="accommodation-card" *ngFor="let a of tab5Results()">
             <mat-card-title>Name of Accommodation: {{ a.accommodationName }}</mat-card-title>
+
             <mat-card-content>
               <p><strong>Environment:</strong> {{ a.environment }}</p>
             </mat-card-content>
@@ -185,7 +190,6 @@
               <p><strong>Address:</strong> {{ a.accommodationAddress }}</p>
             </mat-card-content>
 
-            <!-- 🔹 One row with 2 charts horizontally -->
             <mat-card-content class="chart-row">
               <div class="chart-box">
                 <p><strong>Average temperature graph</strong></p>
@@ -201,12 +205,15 @@
             </mat-card-content>
 
             <mat-card-actions>
-              <a mat-button color="accent" [routerLink]="['/book', a.id]">Click to book</a>
+              <a mat-button color="accent" [routerLink]="['/book', a.id]">
+                Click to book
+              </a>
             </mat-card-actions>
           </mat-card>
         </div>
       </div>
     </form>
   </mat-tab>
+
 
 </mat-tab-group>

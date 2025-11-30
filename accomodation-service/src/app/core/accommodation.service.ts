@@ -101,5 +101,10 @@ export class AccommodationService {
     );
   }
 
+  getAllAcommodations(): Observable<string[]> {
+  return this.http.get<string[]>(
+    `${this.baseUrl}/api/accommodations/getAllAcommodations`
+  );
+}
 
 }

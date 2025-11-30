@@ -20,6 +20,7 @@ import { Accommodation } from '../core/models';
 import { InfoDialogComponent } from './info-dialog.component';
 import { AuthService } from '../core/auth.service';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatTabChangeEvent } from '@angular/material/tabs';
 
 @Component({
   selector: 'app-admin',
@@ -47,6 +48,7 @@ export class AdminComponent {
   }));
   environmentTypes: EnvironmentType[] = ['Any','Beach','Hill Country','City','Wildlife','Cultural'];
   accomodationTypes: AccommodationType[] = ['Any','Hotel','Resort','Villa','Guest House','Hostel'];
+  allAccomodationsToSelect: string[] = [];
 
     provinces: string[] = [
     'Western',
@@ -516,7 +518,7 @@ export class AdminComponent {
 
 
     this.tab5Form = this.fb.group({
-      accomodationType: [null as AccommodationType | null]
+      selectedAccommodation: [null as string | null],
     });
   }
 
@@ -615,6 +617,27 @@ export class AdminComponent {
     }
     return this.citiesByDistrict[district] ?? [];
   }
+
+  onTabChange(event: MatTabChangeEvent): void {
+    // Option 1: check by label
+    if (event.tab.textLabel === 'Forecasting') {
+      this.onForecastingTabOpened();
+    }
+
+  }
+
+  onForecastingTabOpened(): void {
+    this.svc.getAllAcommodations().subscribe({
+      next: (list) => {
+        this.allAccomodationsToSelect = list;   // list: string[]
+      },
+      error: (err) => {
+        console.error('getAllAcommodations failed', err);
+        this.allAccomodationsToSelect = [];
+      }
+    });
+  }
+
 
   logout(): void {
     this.auth.logout();               // clear user info
