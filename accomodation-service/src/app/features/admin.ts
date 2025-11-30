@@ -397,6 +397,21 @@ export class AdminComponent {
     }
   };
 
+  forecastRevenueBarOptions: ChartConfiguration['options'] = {
+    responsive: true,
+    plugins: {
+      legend: { display: false }
+    },
+    scales: {
+      x: {},
+      y: {
+        beginAtZero: true,
+        max: 1000000,
+        title: { display: true, text: 'Revenue' }
+      }
+    }
+  };
+
   getBookingsChartData(a: any): ChartConfiguration['data'] {
     const temps: number[] = this.monthLabels.map((_, idx) => {
       // avgTempByMonthC has keys 1..12
@@ -496,6 +511,25 @@ export class AdminComponent {
         {
           data,
           label: 'Forecasted Bookings'
+        }
+      ]
+    };
+  }
+
+  getRevenueForecastChartData(a: any): ChartConfiguration['data'] {
+    const entries = Object.entries(a.forecastRevenues)
+      .map(([key, value]) => ({ monthCode: Number(key), value: Number(value) }))
+      .sort((a, b) => a.monthCode - b.monthCode);
+
+    const labels = entries.map(e => this.monthNameFromCode(e.monthCode));
+    const data = entries.map(e => e.value);
+
+    return {
+      labels,
+      datasets: [
+        {
+          data,
+          label: 'Forecasted Revenue'
         }
       ]
     };

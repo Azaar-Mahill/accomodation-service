@@ -202,6 +202,17 @@
                   </canvas>
                 </div>
               </div>
+              <div class="chart-box">
+                <p><strong>Forecasted Revenue</strong></p>
+                <div class="chart-container">
+                  <canvas
+                    baseChart
+                    [type]="'bar'"
+                    [data]="getRevenueForecastChartData(a)"
+                    [options]="forecastRevenueBarOptions">
+                  </canvas>
+                </div>
+              </div>
             </mat-card-content>
 
           </mat-card>
