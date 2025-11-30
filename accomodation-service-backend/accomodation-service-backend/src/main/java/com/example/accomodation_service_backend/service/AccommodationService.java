@@ -558,6 +558,7 @@ public class AccommodationService {
 
         List<AccomodationKPIDTO> listOfAccomodationKPIDTO = new ArrayList<>();
         int currentMonthNumber = LocalDate.now().getMonthValue();
+        int currentYearNumber = LocalDate.now().getYear();
 
         for(Accommodation accomodationsUsingAccomodationLocationSk:listOfFilteredAccomodationsUsingAccomodationLocationSk){
             AccomodationKPIDTO accomodationKPIDTO = new AccomodationKPIDTO();
@@ -599,6 +600,11 @@ public class AccommodationService {
 
                 for (BookAccomodation booking : listOfBookings) {
 
+                    int bookingYear = Integer.parseInt(booking.getCheckinDateSk().substring(0, 4));
+
+                    if(currentYearNumber != bookingYear){
+                        continue;
+                    }
                     int bookingMonth = Integer.parseInt(booking.getCheckinDateSk().substring(5, 7));
 
                     if (month == bookingMonth) {
