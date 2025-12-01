@@ -60,10 +60,6 @@ public class AccommodationService {
             listOfAccommodationTypeSks = accommodationTypeRepository.findAccommodationTypeSksByTypeName(accomodationType);
         }
 
-        if(listOfAccommodationTypeSks.size() == 0){
-            return new ArrayList<>();
-        }
-
         List<Accommodation> listOfAccommodationsFoundFromAccommodationTypeSks = new ArrayList<>();
 
         for (String accommodationTypeSk : listOfAccommodationTypeSks){
@@ -212,6 +208,15 @@ public class AccommodationService {
 
             listOfFilteredAccommodations.add(accomodationDTO);
         }
+
+        //////////////////////////////////////////////////////////////////////////////////////////////////
+        System.out.println("listOfAccommodationTypeSks.size() : " + listOfAccommodationTypeSks.size());
+        System.out.println("listOfAccommodationsFoundFromAccommodationTypeSks.size() : " + listOfAccommodationsFoundFromAccommodationTypeSks.size());
+        System.out.println("listOfAccommodationsFoundFromEnvironmentTypeSks.size() : " + listOfAccommodationsFoundFromEnvironmentTypeSks.size());
+        System.out.println("listOfAccommodationsFoundFromFilteringSafety.size() : " + listOfAccommodationsFoundFromFilteringSafety.size());
+        System.out.println("listOfAccommodationsFoundFromFilteringWeather.size() : " + listOfAccommodationsFoundFromFilteringWeather.size());
+        System.out.println("listOfFilteredAccommodations.size() : " + listOfFilteredAccommodations.size());
+        //////////////////////////////////////////////////////////////////////////////////////////////////
 
         return listOfFilteredAccommodations;
 

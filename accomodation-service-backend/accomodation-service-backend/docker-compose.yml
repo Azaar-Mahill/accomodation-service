@@ -1,0 +1,22 @@
+services:
+  accomodation-service-database:
+    image: mysql:latest
+    container_name: accomodation-service-database-container
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=tourist_dw
+      - MYSQL_USER=root1
+      - MYSQL_PASSWORD=root1
+    ports:
+      - 3307:3306
+
+  accomodation-service-database-backend-container:
+    image: accomodation-service-database-backend-container
+    container_name: accomodation-service-database-backend-container
+    ports:
+      - 8080:8080
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    depends_on:
+      - accomodation-service-database

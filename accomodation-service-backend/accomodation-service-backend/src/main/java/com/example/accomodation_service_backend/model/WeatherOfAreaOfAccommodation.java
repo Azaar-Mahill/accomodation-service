@@ -9,7 +9,7 @@ import org.hibernate.type.SqlTypes;
 import java.math.BigDecimal;
 
 @Entity
-@Table(name = "Dim_WeatherOfAreaOfAccommodation") // if your table was created lowercase, use "dim_weatherofareaofaccommodation"
+@Table(name = "dim_weatherofareaofaccommodation") // if your table was created lowercase, use "dim_weatherofareaofaccommodation"
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
